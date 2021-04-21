@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         wait = 2
-        
+
         while True:
             try:
                 connection.ensure_connection()
@@ -19,9 +19,10 @@ class Command(BaseCommand):
                 plural_time = ngettext("second", "seconds", wait)
                 self.stdout.write(
                     self.style.WARNING(
-                        f"Database unavailable, retrying after {wait} {plural_time}!"
+                        f"Database unavailable, retrying after {wait} "
+                        f"{plural_time}! "
                     )
                 )
                 time.sleep(wait)
-        self.stdout.write(self.style.SUCCESS("Database connections successful"))
-        
+        self.stdout.write(self.style.SUCCESS("Database "
+                                             "connections successful"))
