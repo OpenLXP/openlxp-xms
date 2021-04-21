@@ -11,8 +11,11 @@ services:
       MYSQL_PASSWORD: "${DB_PASSWORD}"
       MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
       MYSQL_HOST: ''
+    networks:
+        - openlxp
 
   app:
+    container_name: openlxp-xms
     build:
       context: .
     ports:
@@ -41,3 +44,9 @@ services:
       - ./app:/opt/app/openlxp-xms
     depends_on:
       - db
+    networks:
+      - openlxp
+
+networks:
+  openlxp:
+    external: true
