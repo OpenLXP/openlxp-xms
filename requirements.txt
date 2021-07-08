@@ -24,3 +24,7 @@ s3fs
 requests~=2.25.1
 
 coverage>=5.5,<6.0
+
+boto3~=1.16.54
+
+django-ses>=2.0.0 , <2.1.0

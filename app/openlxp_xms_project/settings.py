@@ -129,6 +129,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+LOG_PATH = os.environ.get('LOG_PATH')
 
 LOGGING = {
     'version': 1,
@@ -157,3 +158,5 @@ LOGGING = {
         }
     }
 }
+
+EMAIL_BACKEND = 'django_ses.SESBackend'
