@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from core.models import XMSConfiguration, ReceiverEmailConfiguration, \
-    SenderEmailConfiguration
+from core.models import (ReceiverEmailConfiguration, SenderEmailConfiguration,
+                         XMSConfiguration)
 
 
 # Register your models here.

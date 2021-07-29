@@ -1,6 +1,6 @@
 import logging
-import requests
 
+import requests
 from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -10,6 +10,7 @@ from rest_framework.utils import json
 from core.models import XMSConfiguration
 
 logger = logging.getLogger('dict_config_logger')
+
 
 @api_view(['GET'])
 def catalogs(request):
@@ -96,7 +97,7 @@ def list_experiences(request):
 
         return Response(errorMsg,
                         status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
 
 @api_view(['GET', 'PATCH'])
 def experience(request, course_id):
@@ -115,9 +116,8 @@ def experience(request, course_id):
             # make API call
             response = requests.get(api_url)
         elif request.method == 'PATCH':
-            logger.info(request.data)
             response = requests.patch(api_url, json=request.data)
-        
+
         responseJSON = json.dumps(response.json())
         responseDict = json.loads(responseJSON)
         logger.info(responseJSON)

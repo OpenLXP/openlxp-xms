@@ -13,7 +13,7 @@ class XMSConfiguration(models.Model):
         max_length=200,
         default='http://localhost:8080/api/metadata/'
     )
-    xis_catalogs_api =  models.CharField(
+    xis_catalogs_api = models.CharField(
         help_text='Enter the XIS api endpoint to get catalogs',
         max_length=200,
         default='http://localhost:8080/api/catalogs/'

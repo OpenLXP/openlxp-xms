@@ -8,7 +8,8 @@ router = DefaultRouter()
 app_name = 'api'
 
 urlpatterns = [
-    path('catalogs/', views.catalogs),
+    path('catalogs/', views.catalogs,
+         name='catalogs'),
     path('experiences/', views.list_experiences,
          name='experiences'),
     path('experiences/<str:course_id>/', views.experience,

@@ -1,13 +1,12 @@
 import logging
 from unittest.mock import patch
 
-from django.test import tag
+from django.test import TestCase, tag
 
-from django.test import TestCase
-
-from core.management.utils.xds_internal import send_log_email
-from core.management.utils.notification import send_notifications
-from core.models import (ReceiverEmailConfiguration, SenderEmailConfiguration)
+from core.management.utils.notification import (check_if_email_verified,
+                                                send_notifications)
+from core.management.utils.xms_internal import send_log_email
+from core.models import ReceiverEmailConfiguration, SenderEmailConfiguration
 
 logger = logging.getLogger('dict_config_logger')
 
@@ -34,11 +33,11 @@ class UtilsTests(TestCase):
 
     def test_send_log_email(self):
         """Test for function to send emails of log file to personas"""
-        with patch('core.management.utils.xds_internal'
+        with patch('core.management.utils.xms_internal'
                    '.ReceiverEmailConfiguration') as receive_email_cfg, \
-                patch('core.management.utils.xds_internal'
+                patch('core.management.utils.xms_internal'
                       '.SenderEmailConfiguration') as sender_email_cfg, \
-                patch('core.management.utils.xds_internal'
+                patch('core.management.utils.xms_internal'
                       '.send_notifications', return_value=None
                       ) as mock_send_notification:
 
@@ -56,3 +55,25 @@ class UtilsTests(TestCase):
             sender_email_cfg.first.return_value = send_email
             send_log_email(self.message)
             self.assertEqual(mock_send_notification.call_count, 1)
+
+    def test_check_if_email_verified(self):
+        """Test to check if email id from user is verified """
+        receive_email_list = ['receiver1@openlxp.com',
+                              'receiver1@openlxp.com']
+        with patch('core.management.utils.notification'
+                   '.list_email_verified') as mock_list:
+            mock_list.return_value = receive_email_list
+            email_value = 'receiver1@openlxp.com'
+            return_val = check_if_email_verified(email_value)
+            self.assertFalse(return_val)
+
+    def test_check_if_email_not_verified(self):
+        """Test to check if email id from user is verified """
+        receive_email_list = ['receiver1@openlxp.com',
+                              'receiver1@openlxp.com']
+        with patch('core.management.utils.notification'
+                   '.list_email_verified') as mock_list:
+            mock_list.return_value = receive_email_list
+            email_value = 'receiver2@openlxp.com'
+            return_val = check_if_email_verified(email_value)
+            self.assertTrue(return_val)
