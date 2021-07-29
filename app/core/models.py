@@ -8,10 +8,15 @@ from core.management.utils.notification import email_verification
 class XMSConfiguration(models.Model):
     """Model for XMS Configuration """
 
-    xis_host = models.CharField(
-        help_text='Enter the host url for the XIS (Experience '
-                  'Indexing Service)',
-        max_length=200
+    target_xis_metadata_api = models.CharField(
+        help_text='Enter the XIS api endpoint to query metadata',
+        max_length=200,
+        default='http://localhost:8080/api/metadata/'
+    )
+    xis_catalogs_api =  models.CharField(
+        help_text='Enter the XIS api endpoint to get catalogs',
+        max_length=200,
+        default='http://localhost:8080/api/catalogs/'
     )
 
     def get_absolute_url(self):
