@@ -12,6 +12,6 @@ urlpatterns = [
          name='catalogs'),
     path('experiences/', views.list_experiences,
          name='experiences'),
-    path('experiences/<str:course_id>/', views.experience,
+    path('experiences/<str:id>/', views.experience,
          name='experience'),
 ]

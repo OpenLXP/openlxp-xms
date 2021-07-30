@@ -100,7 +100,7 @@ def list_experiences(request):
 
 
 @api_view(['GET', 'PATCH'])
-def experience(request, course_id):
+def experience(request, id):
     """This method defines an API to fetch or modify the record of the
         corresponding course id"""
     errorMsg = {
@@ -110,7 +110,7 @@ def experience(request, course_id):
     try:
         metadata_xis_api = XMSConfiguration.objects.first()\
             .target_xis_metadata_api
-        api_url = metadata_xis_api + course_id + '/'
+        api_url = metadata_xis_api + id + '/'
 
         if request.method == 'GET':
             # make API call
