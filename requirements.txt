@@ -5,6 +5,7 @@ django-mysql>=3.10.0,<3.11.0
 Django>=3.1.4,<3.2.0
 
 djangorestframework>=3.12.2,<3.13.0
+
 boto3~=1.16.54
 
 flake8>=3.8.4,<3.9.0
@@ -21,10 +22,14 @@ numpy>= 1.19.5, < 1.20.0
 
 s3fs
 
-requests~=2.25.1
-
 coverage>=5.5,<6.0
 
 boto3~=1.16.54
 
 django-ses>=2.0.0 , <2.1.0
+
+django-cors-headers>=3.7.0, <3.8.0
+
+ddt>=1.4.2, <1.5.0
+
+requests>=2.25.1, <2.26.0

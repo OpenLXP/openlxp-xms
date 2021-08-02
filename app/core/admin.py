@@ -1,14 +1,14 @@
 from django.contrib import admin
 
-from core.models import XMSConfiguration, ReceiverEmailConfiguration, \
-    SenderEmailConfiguration
+from core.models import (ReceiverEmailConfiguration, SenderEmailConfiguration,
+                         XMSConfiguration)
 
 
 # Register your models here.
 @admin.register(XMSConfiguration)
 class XMSConfigurationAdmin(admin.ModelAdmin):
-    list_display = ('xis_host',)
-    fields = [('xis_host',)]
+    list_display = ('id', 'target_xis_metadata_api', 'xis_catalogs_api',)
+    fields = [('target_xis_metadata_api', 'xis_catalogs_api',)]
 
 
 @admin.register(ReceiverEmailConfiguration)
