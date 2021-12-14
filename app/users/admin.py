@@ -20,9 +20,10 @@ class UserAdmin(admin.ModelAdmin):
 
     # things that can be edited
     fieldsets = (
-        ('Account Info', {'fields': ('email', 'password')}),
+        ('Account Info', {'fields': ('email',)}),
         ('Personal Info', {'fields': ('first_name', 'last_name',)}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'groups', 'user_permissions')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'groups',
+                                    'user_permissions')}),
     )
     add_fieldsets = (
         (None, {
