@@ -6,53 +6,56 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.utils import json
+from rest_framework.views import APIView
 
 from core.models import XMSConfiguration
 
 logger = logging.getLogger('dict_config_logger')
 
 
-@api_view(['GET'])
-def catalogs(request):
-    """Handles listing all available catalogs"""
-    errorMsg = {
-        "message": "Error fetching catalogs please check the logs."
-    }
+class CatalogsView(APIView):
+    """Catalog List View"""
 
-    try:
-        api_url = XMSConfiguration.objects.first()\
-            .xis_catalogs_api
+    def get(self, request):
+        """Handles listing all available catalogs"""
+        errorMsg = {
+            "message": "Error fetching catalogs please check the logs."
+        }
 
-        # make API call
-        response = requests.get(api_url)
-        responseJSON = json.dumps(response.json())
-        responseDict = json.loads(responseJSON)
-        logger.info(responseJSON)
+        try:
+            api_url = XMSConfiguration.objects.first()\
+                .xis_catalogs_api
 
-        if (response.status_code == 200):
-            return Response(responseDict,
-                            status.HTTP_200_OK)
-        else:
-            return Response(responseDict,
-                            status.HTTP_200_OK)
-    except requests.exceptions.RequestException as e:
-        errorMsg = {"message": "error reaching out to configured XIS API; " +
-                    "please check the XIS logs"}
-        logger.error(e)
+            # make API call
+            response = requests.get(api_url)
+            responseJSON = json.dumps(response.json())
+            responseDict = json.loads(responseJSON)
+            logger.info(responseJSON)
 
-        return Response(errorMsg,
-                        status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if (response.status_code == 200):
+                return Response(responseDict,
+                                status.HTTP_200_OK)
+            else:
+                return Response(responseDict,
+                                status.HTTP_200_OK)
+        except requests.exceptions.RequestException as e:
+            errorMsg = {"message": "error reaching out to configured XIS API; "
+                        + "please check the XIS logs"}
+            logger.error(e)
 
-    except HTTPError as http_err:
-        logger.error(http_err)
+            return Response(errorMsg,
+                            status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(errorMsg,
-                        status.HTTP_500_INTERNAL_SERVER_ERROR)
-    except Exception as err:
-        logger.error(err)
+        except HTTPError as http_err:
+            logger.error(http_err)
 
-        return Response(errorMsg,
-                        status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(errorMsg,
+                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as err:
+            logger.error(err)
+
+            return Response(errorMsg,
+                            status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
