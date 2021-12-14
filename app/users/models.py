@@ -1,5 +1,9 @@
+from django.conf import settings
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+                                        PermissionsMixin)
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from rest_framework import exceptions
+from rest_framework.permissions import DjangoModelPermissions
 
 
 class UserProfileManager(BaseUserManager):
@@ -79,3 +83,68 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
         Overrides the save method to hash the password.
         """
         super(UserProfile, self).save(*args, **kwargs)
+
+
+class PermissionsChecker(DjangoModelPermissions):
+    """
+    Class to define the method for checking permissions for the XDS API
+    """
+    perms_map = {
+        'GET': ['%(app_label)s.view_%(model_name)s'],
+        'OPTIONS': ['%(app_label)s.view_%(model_name)s'],
+        'POST': ['%(app_label)s.add_%(model_name)s'],
+        'PUT': ['%(app_label)s.change_%(model_name)s'],
+        'PATCH': ['%(app_label)s.change_%(model_name)s'],
+        'DELETE': ['%(app_label)s.delete_%(model_name)s'],
+    }
+
+    def has_permission(self, request, view):
+        # Workaround to ensure DjangoModelPermissions are not applied
+        # to the root view when using DefaultRouter.
+        if getattr(view, '_ignore_model_permissions', False):
+            return True
+
+        # if current request is in OPEN_ENDPOINTS doesn't check permissions,
+        # returns true
+        if request.path_info in getattr(settings, 'OPEN_ENDPOINTS', []):
+            return True
+
+        # checks if there is a logged in user
+        if not request.user or (
+                not request.user.is_authenticated and
+                self.authenticated_users_only):
+            return False
+
+        try:
+            # tries to get app and model names from view
+            model_meta = self._queryset(view).model._meta
+
+        except Exception:
+            # if unable, generates app and model names
+            def model_meta():
+                return None
+
+            model_meta.app_label = "core"
+            model_meta.model_name = \
+                view.get_view_name().lower().replace(' ', '')
+
+        # determines permission required to access this endpoint
+        perms = self.get_required_permissions(request.method, model_meta)
+
+        # checks if the user has the required permission
+        return request.user.has_perms(perms)
+
+    def get_required_permissions(self, method, model_meta):
+        """
+        Given a model and an HTTP method, return the list of permission
+        codes that the user is required to have.
+        """
+        kwargs = {
+            'app_label': model_meta.app_label,
+            'model_name': model_meta.model_name
+        }
+
+        if method not in self.perms_map:
+            raise exceptions.MethodNotAllowed(method)
+
+        return [perm % kwargs for perm in self.perms_map[method]]
