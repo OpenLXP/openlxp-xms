@@ -58,95 +58,107 @@ class CatalogsView(APIView):
                             status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['GET'])
-def list_experiences(request):
-    """Handles listing requests for experiences"""
-    errorMsg = {
-        "message": "Error fetching experiences please check the logs."
-    }
+class ListExperiencesView(APIView):
+    """Experiences List View"""
 
-    try:
-        metadata_xis_api = XMSConfiguration.objects.first()\
-            .target_xis_metadata_api
-        api_url = metadata_xis_api + '?' + request.META['QUERY_STRING']
+    def get(self, request):
+        """Handles listing requests for experiences"""
+        errorMsg = {
+            "message": "Error fetching experiences please check the logs."
+        }
 
-        # make API call
-        response = requests.get(api_url)
-        responseJSON = json.dumps(response.json())
-        responseDict = json.loads(responseJSON)
-        logger.info(responseJSON)
+        try:
+            metadata_xis_api = XMSConfiguration.objects.first()\
+                .target_xis_metadata_api
+            api_url = metadata_xis_api + '?' + request.META['QUERY_STRING']
 
-        if (response.status_code == 200):
-            return Response(responseDict,
-                            status.HTTP_200_OK)
-        else:
-            return Response(responseDict,
-                            status.HTTP_200_OK)
-    except requests.exceptions.RequestException as e:
-        errorMsg = {"message": "error reaching out to configured XIS API; " +
-                    "please check the XIS logs"}
-        logger.error(e)
-
-        return Response(errorMsg,
-                        status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    except HTTPError as http_err:
-        logger.error(http_err)
-
-        return Response(errorMsg,
-                        status.HTTP_500_INTERNAL_SERVER_ERROR)
-    except Exception as err:
-        logger.error(err)
-
-        return Response(errorMsg,
-                        status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@api_view(['GET', 'PATCH'])
-def experience(request, id):
-    """This method defines an API to fetch or modify the record of the
-        corresponding course id"""
-    errorMsg = {
-        "message": "Error fetching experiences please check the logs."
-    }
-
-    try:
-        metadata_xis_api = XMSConfiguration.objects.first()\
-            .target_xis_metadata_api
-        api_url = metadata_xis_api + id + '/'
-
-        if request.method == 'GET':
             # make API call
             response = requests.get(api_url)
-        elif request.method == 'PATCH':
-            response = requests.patch(api_url, json=request.data)
+            responseJSON = json.dumps(response.json())
+            responseDict = json.loads(responseJSON)
+            logger.info(responseJSON)
 
-        responseJSON = json.dumps(response.json())
-        responseDict = json.loads(responseJSON)
-        logger.info(responseJSON)
+            if (response.status_code == 200):
+                return Response(responseDict,
+                                status.HTTP_200_OK)
+            else:
+                return Response(responseDict,
+                                status.HTTP_200_OK)
+        except requests.exceptions.RequestException as e:
+            errorMsg = {"message": "error reaching out to configured XIS API; " +
+                        "please check the XIS logs"}
+            logger.error(e)
 
-        if (response.status_code == 200):
+            return Response(errorMsg,
+                            status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            return Response(responseDict,
-                            status.HTTP_200_OK)
-        else:
-            return Response(responseDict,
-                            status.HTTP_400_BAD_REQUEST)
-    except requests.exceptions.RequestException as e:
-        errorMsg = {"message": "error reaching out to configured XIS API; " +
-                    "please check the XIS logs"}
-        logger.error(e)
+        except HTTPError as http_err:
+            logger.error(http_err)
 
-        return Response(errorMsg,
-                        status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(errorMsg,
+                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as err:
+            logger.error(err)
 
-    except HTTPError as http_err:
-        logger.error(http_err)
+            return Response(errorMsg,
+                            status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(errorMsg,
-                        status.HTTP_500_INTERNAL_SERVER_ERROR)
-    except Exception as err:
-        logger.error(err)
 
-        return Response(errorMsg,
-                        status.HTTP_500_INTERNAL_SERVER_ERROR)
+class ExperiencesView(APIView):
+    """Experiences View"""
+
+    def get(self, request, id):
+        """Fetches the record of the corresponding course id"""
+        return self._experience(request, id)
+
+    def patch(self, request, id):
+        """Modifies the record of the corresponding course id"""
+        return self._experience(request, id)
+
+    def _experience(self, request, id):
+        """This method defines an API to fetch or modify the record of the
+            corresponding course id"""
+        errorMsg = {
+            "message": "Error fetching experiences please check the logs."
+        }
+
+        try:
+            metadata_xis_api = XMSConfiguration.objects.first()\
+                .target_xis_metadata_api
+            api_url = metadata_xis_api + id + '/'
+
+            if request.method == 'GET':
+                # make API call
+                response = requests.get(api_url)
+            elif request.method == 'PATCH':
+                response = requests.patch(api_url, json=request.data)
+
+            responseJSON = json.dumps(response.json())
+            responseDict = json.loads(responseJSON)
+            logger.info(responseJSON)
+
+            if (response.status_code == 200):
+
+                return Response(responseDict,
+                                status.HTTP_200_OK)
+            else:
+                return Response(responseDict,
+                                status.HTTP_400_BAD_REQUEST)
+        except requests.exceptions.RequestException as e:
+            errorMsg = {"message": "error reaching out to configured XIS API; " +
+                        "please check the XIS logs"}
+            logger.error(e)
+
+            return Response(errorMsg,
+                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except HTTPError as http_err:
+            logger.error(http_err)
+
+            return Response(errorMsg,
+                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as err:
+            logger.error(err)
+
+            return Response(errorMsg,
+                            status.HTTP_500_INTERNAL_SERVER_ERROR)
