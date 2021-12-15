@@ -207,7 +207,7 @@ SUPPORT_CONTACT = {
 }
 USER_ATTRIBUTES = [
     "user_permanent_id",
-    "username",
+    "email",
     "first_name",
     "last_name"
 ]
