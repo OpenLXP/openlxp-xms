@@ -3,7 +3,6 @@ import logging
 import requests
 from requests.exceptions import HTTPError
 from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.utils import json
 from rest_framework.views import APIView
@@ -85,8 +84,8 @@ class ListExperiencesView(APIView):
                 return Response(responseDict,
                                 status.HTTP_200_OK)
         except requests.exceptions.RequestException as e:
-            errorMsg = {"message": "error reaching out to configured XIS API; " +
-                        "please check the XIS logs"}
+            errorMsg = {"message": "error reaching out to configured XIS API; "
+                        + "please check the XIS logs"}
             logger.error(e)
 
             return Response(errorMsg,
@@ -145,8 +144,8 @@ class ExperiencesView(APIView):
                 return Response(responseDict,
                                 status.HTTP_400_BAD_REQUEST)
         except requests.exceptions.RequestException as e:
-            errorMsg = {"message": "error reaching out to configured XIS API; " +
-                        "please check the XIS logs"}
+            errorMsg = {"message": "error reaching out to configured XIS API; "
+                        + "please check the XIS logs"}
             logger.error(e)
 
             return Response(errorMsg,
