@@ -227,4 +227,8 @@ REST_FRAMEWORK = {
 }
 
 OPEN_ENDPOINTS = [
+    '/api/auth/login',
+    '/api/auth/register',
+    '/api/auth/logout',
+    '/api/auth/validate',
 ]
