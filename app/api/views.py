@@ -1,7 +1,6 @@
 import logging
 
 import requests
-from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.utils import json
@@ -36,7 +35,7 @@ class CatalogsView(APIView):
                                 status.HTTP_200_OK)
             else:
                 return Response(responseDict,
-                                status.HTTP_200_OK)
+                                status.HTTP_503_SERVICE_UNAVAILABLE)
         except requests.exceptions.RequestException as e:
             errorMsg = {"message": "error reaching out to configured XIS API; "
                         + "please check the XIS logs"}
@@ -45,11 +44,6 @@ class CatalogsView(APIView):
             return Response(errorMsg,
                             status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        except HTTPError as http_err:
-            logger.error(http_err)
-
-            return Response(errorMsg,
-                            status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as err:
             logger.error(err)
 
@@ -82,7 +76,7 @@ class ListExperiencesView(APIView):
                                 status.HTTP_200_OK)
             else:
                 return Response(responseDict,
-                                status.HTTP_200_OK)
+                                status.HTTP_503_SERVICE_UNAVAILABLE)
         except requests.exceptions.RequestException as e:
             errorMsg = {"message": "error reaching out to configured XIS API; "
                         + "please check the XIS logs"}
@@ -91,11 +85,6 @@ class ListExperiencesView(APIView):
             return Response(errorMsg,
                             status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        except HTTPError as http_err:
-            logger.error(http_err)
-
-            return Response(errorMsg,
-                            status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as err:
             logger.error(err)
 
@@ -142,7 +131,7 @@ class ExperiencesView(APIView):
                                 status.HTTP_200_OK)
             else:
                 return Response(responseDict,
-                                status.HTTP_400_BAD_REQUEST)
+                                status.HTTP_503_SERVICE_UNAVAILABLE)
         except requests.exceptions.RequestException as e:
             errorMsg = {"message": "error reaching out to configured XIS API; "
                         + "please check the XIS logs"}
@@ -151,11 +140,6 @@ class ExperiencesView(APIView):
             return Response(errorMsg,
                             status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        except HTTPError as http_err:
-            logger.error(http_err)
-
-            return Response(errorMsg,
-                            status.HTTP_500_INTERNAL_SERVER_ERROR)
         except Exception as err:
             logger.error(err)
 
