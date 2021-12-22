@@ -27,6 +27,9 @@ class ViewTests(TestSetUp):
             }]
             http_resp.status_code = 200
 
+            self.client.login(username=self.su_username,
+                              password=self.su_password)
+
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -39,6 +42,9 @@ class ViewTests(TestSetUp):
 
         with patch('api.views.requests.get') as get_request:
             get_request.side_effect = [HTTPError]
+
+            self.client.login(username=self.su_username,
+                              password=self.su_password)
 
             response = self.client.get(url)
             responseDict = json.loads(response.content)
@@ -60,6 +66,9 @@ class ViewTests(TestSetUp):
             }]
             http_resp.status_code = 200
 
+            self.client.login(username=self.su_username,
+                              password=self.su_password)
+
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -72,6 +81,9 @@ class ViewTests(TestSetUp):
 
         with patch('api.views.requests.get') as get_request:
             get_request.side_effect = [HTTPError]
+
+            self.client.login(username=self.su_username,
+                              password=self.su_password)
 
             response = self.client.get(url)
             responseDict = json.loads(response.content)
@@ -93,6 +105,9 @@ class ViewTests(TestSetUp):
             }
             http_resp.status_code = 200
 
+            self.client.login(username=self.su_username,
+                              password=self.su_password)
+
             response = self.client.get(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -106,6 +121,9 @@ class ViewTests(TestSetUp):
 
         with patch('api.views.requests.get') as get_request:
             get_request.side_effect = [HTTPError]
+
+            self.client.login(username=self.su_username,
+                              password=self.su_password)
 
             response = self.client.get(url)
             responseDict = json.loads(response.content)
@@ -127,6 +145,9 @@ class ViewTests(TestSetUp):
             }
             http_resp.status_code = 200
 
+            self.client.login(username=self.su_username,
+                              password=self.su_password)
+
             response = self.client.patch(url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -140,6 +161,9 @@ class ViewTests(TestSetUp):
 
         with patch('api.views.requests.patch') as patch_request:
             patch_request.side_effect = [HTTPError]
+
+            self.client.login(username=self.su_username,
+                              password=self.su_password)
 
             response = self.client.patch(url)
             responseDict = json.loads(response.content)

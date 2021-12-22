@@ -41,6 +41,9 @@ services:
       AWS_CA_BUNDLE: '/etc/ssl/certs/ca-certificates.pem'
       SECRET_KEY_VAL: "${SECRET_KEY_VAL}"
       LOG_PATH: "${LOG_PATH}"
+      ENTITY_ID: "${ENTITY_ID}"
+      SP_PUBLIC_CERT: "${SP_PUBLIC_CERT}"
+      SP_PRIVATE_KEY: "${SP_PRIVATE_KEY}"
     volumes:
       - ./app:/opt/app/openlxp-xms
     depends_on:
