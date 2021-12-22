@@ -2,13 +2,13 @@ import json
 
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import status
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
 
 
-class LoginView(APIView):
+class LoginView(GenericAPIView):
     """Logs user in and returns token"""
     serializer_class = LoginSerializer
 
@@ -45,7 +45,7 @@ class LoginView(APIView):
                         data})
 
 
-class LogoutView(APIView):
+class LogoutView(GenericAPIView):
     """Logs user out and ends session"""
 
     def post(self, request, *args, **kwargs):
@@ -57,7 +57,7 @@ class LogoutView(APIView):
         return response
 
 
-class RegisterView(APIView):
+class RegisterView(GenericAPIView):
     """User Registration API"""
     serializer_class = RegisterSerializer
 
@@ -90,7 +90,7 @@ class RegisterView(APIView):
                 status=status.HTTP_201_CREATED)
 
 
-class IsLoggedInView(APIView):
+class IsLoggedInView(GenericAPIView):
     """API Endpoint to check if session is active"""
 
     def get(self, request):
