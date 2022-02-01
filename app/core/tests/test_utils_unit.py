@@ -1,12 +1,11 @@
 import logging
 from unittest.mock import patch
 
-from django.test import TestCase, tag
-
 from core.management.utils.notification import (check_if_email_verified,
                                                 send_notifications)
 from core.management.utils.xms_internal import send_log_email
 from core.models import ReceiverEmailConfiguration, SenderEmailConfiguration
+from django.test import TestCase, tag
 
 logger = logging.getLogger('dict_config_logger')
 

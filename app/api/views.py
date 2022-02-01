@@ -1,12 +1,11 @@
 import logging
 
 import requests
+from core.models import XMSConfiguration
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.utils import json
 from rest_framework.views import APIView
-
-from core.models import XMSConfiguration
 
 logger = logging.getLogger('dict_config_logger')
 
