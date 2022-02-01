@@ -1,8 +1,7 @@
+from core.management.utils.notification import email_verification
 from django.db import models
 from django.forms import ValidationError
 from django.urls import reverse
-
-from core.management.utils.notification import email_verification
 
 
 class XMSConfiguration(models.Model):

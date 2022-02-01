@@ -1,9 +1,8 @@
 import logging
 
-from django.conf import settings
-
 from core.management.utils.notification import send_notifications
 from core.models import ReceiverEmailConfiguration, SenderEmailConfiguration
+from django.conf import settings
 
 logger = logging.getLogger('dict_config_logger')
 
