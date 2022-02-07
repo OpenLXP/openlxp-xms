@@ -231,4 +231,7 @@ OPEN_ENDPOINTS = [
     '/api/auth/register',
     '/api/auth/logout',
     '/api/auth/validate',
+    '/api/catalogs/',
+    '/api/experiences/',
+    '/api/experiences/[a-z0-9]+/',
 ]
