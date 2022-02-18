@@ -10,7 +10,7 @@ class XMSConfigurations(models.Model):
 
     class Meta:
         # change the name shown
-        verbose_name = "XIS Connection"
+        verbose_name = "XMS Connection"
 
     # the following fields are required for XMS to connect to XIS
     target_xis_metadata_host = models.CharField(
