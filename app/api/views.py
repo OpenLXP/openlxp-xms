@@ -1,88 +1,10 @@
-import requests
-import logging
-
-from configurations.models import XMSConfigurations
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.utils import json
 from rest_framework.views import APIView
 
-logger = logging.getLogger("dict_config_logger")
-
-# helper function to get the catalogs from XIS
-def get_xis_catalogs():
-    """Get all the catalogs available in the XIS
-
-    Returns:
-        list: [string]
-    """
-
-    # get the XMS configuration for the XIS catalog host
-    xis_catalogs_url = XMSConfigurations.objects.first().target_xis_catalogs_host
-
-    # verify the url is set
-    if xis_catalogs_url is None:
-        return Response(
-            {"message": "XIS catalogs host is not configured"},
-            status.HTTP_503_SERVICE_UNAVAILABLE,
-        )
-
-    # request the catalogs from the XIS
-    return requests.get(xis_catalogs_url)
-
-
-# helper function to get an experience from XIS
-def get_xis_experience(provider_id, experience_id):
-    """
-    Get a specific experience from a specific catalog
-
-    Args:
-        provider_id (string): the query parameter for the catalog
-        experience_id (strint): the metadata_key_hash for the experience
-
-    Returns:
-        list: [dictionary]
-    """
-
-    xis_metadata_experience_url = (
-        XMSConfigurations.objects.first().target_xis_metadata_host
-    )
-
-    if xis_metadata_experience_url is None:
-        return Response(
-            {"message": "XIS metadata host is not configured"},
-            status.HTTP_503_SERVICE_UNAVAILABLE,
-        )
-
-    xis_metadata_experience_url = (
-        xis_metadata_experience_url
-        + f"?provider_id={provider_id}&metadata_key_hash_list={experience_id}"
-    )
-
-    return requests.get(xis_metadata_experience_url)
-
-
-# helper function to get all experiences from a catalog in XIS
-def get_catalog_experiences(provider_id):
-    """Get all the experiences for a given catalog
-
-    Args:
-        provider_id (string): the query parameter for the catalog
-
-    Returns:
-        list: [dictionary]
-    """
-    xis_metadata_url = XMSConfigurations.objects.first().target_xis_metadata_host
-    xis_metadata_url = xis_metadata_url + f"?provider={provider_id}"
-
-    if xis_metadata_url is None:
-        return Response(
-            {"message": "XIS metadata host is not configured"},
-            status.HTTP_503_SERVICE_UNAVAILABLE,
-        )
-
-    # request the experiences from the specified catalog
-    return requests.get(xis_metadata_url)
+from api.utils.xis_helper_functions import (get_catalog_experiences,
+                                            get_xis_catalogs,
+                                            get_xis_experience)
 
 
 class XISAvailableCatalogs(APIView):
@@ -98,13 +20,13 @@ class XISAvailableCatalogs(APIView):
         if xis_catalogs_response.status_code != 200:
             # return the error message
             return Response(
-                {"detail": "There was an error processing your request"},
+                {"detail": "There was an error processing your request."},
                 status=xis_catalogs_response.status_code,
             )
 
         # return the response
         return Response(
-            {"catalogs": xis_catalogs_response.json()}, status=status.HTTP_200_OK
+            {"catalogs": xis_catalogs_response.json()}, status.HTTP_200_OK
         )
 
 
@@ -131,7 +53,9 @@ class XISCatalog(APIView):
         # validate that the provider_id is valid
         if provider_id not in xis_catalogs_response.json():
             return Response(
-                {"detail": "The provider id does not exist in the XIS catalogs"},
+                {
+                    "detail": "The provider id does not exist in the XIS catalogs"
+                },
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -188,7 +112,9 @@ class XISCatalogExperience(APIView):
         # validate that the provider_id is valid
         if provider_id not in xis_catalogs_response.json():
             return Response(
-                {"detail": "The provider id does not exist in the XIS catalogs"},
+                {
+                    "detail": "The provider id does not exist in the XIS catalogs"
+                },
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -208,7 +134,7 @@ class XISCatalogExperience(APIView):
         experience = provider_experience_response.json()[0]
 
         return Response({"experience": experience}, status=status.HTTP_200_OK)
-    
+
     def post(self, request, provider_id, experience_id):
         """Returns the experience from the corresponding catalog
 
