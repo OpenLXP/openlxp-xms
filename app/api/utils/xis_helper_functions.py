@@ -38,12 +38,6 @@ def get_xis_experience(provider_id, experience_id):
         XMSConfigurations.objects.first().target_xis_metadata_host
     )
 
-    if xis_metadata_experience_url is None:
-        return Response(
-            {"message": "XIS metadata host is not configured"},
-            status.HTTP_503_SERVICE_UNAVAILABLE,
-        )
-
     xis_metadata_experience_url = (
         xis_metadata_experience_url
         + f"?provider_id={provider_id}&metadata_key_hash_list={experience_id}"
@@ -66,12 +60,6 @@ def get_catalog_experiences(provider_id):
         XMSConfigurations.objects.first().target_xis_metadata_host
     )
     xis_metadata_url = xis_metadata_url + f"?provider={provider_id}"
-
-    if xis_metadata_url is None:
-        return Response(
-            {"message": "XIS metadata host is not configured"},
-            status.HTTP_503_SERVICE_UNAVAILABLE,
-        )
 
     # request the experiences from the specified catalog
     return requests.get(xis_metadata_url)
