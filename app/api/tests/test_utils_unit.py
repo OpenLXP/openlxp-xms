@@ -1,4 +1,3 @@
-import json
 from unittest.mock import patch
 
 from api.utils.xis_helper_functions import (get_catalog_experiences,
@@ -7,8 +6,6 @@ from api.utils.xis_helper_functions import (get_catalog_experiences,
 from configurations.models import XMSConfigurations
 from ddt import ddt
 from django.test import TestCase, tag
-from django.urls import reverse
-from rest_framework import status
 
 
 @tag("xis_utils")
@@ -38,7 +35,7 @@ class TestXISUtils(TestCase):
             # assert the response
             self.assertEqual(response, {"test": "value"})
 
-    def test_get_xis_experiences(self):
+    def test_get_xis_experience(self):
         """
         Test that the get_xis_experiences function returns a response
         """

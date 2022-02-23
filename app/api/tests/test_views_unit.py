@@ -1,20 +1,16 @@
-import json
 from unittest.mock import patch
-from urllib import response
 
 from api.tests.test_setup import TestSetUp
-from configurations.models import XMSConfigurations
 from ddt import ddt
-from django.test import TestCase, tag
+from django.test import tag
 from django.urls import reverse
-from requests.exceptions import HTTPError
 from rest_framework import status
 
 
 @tag("xis_views")
 @ddt
 class XISViewsTests(TestSetUp):
-    def test_xis_catalogs_view(self):
+    def test_xis_get_catalogs_view(self):
         """
         Tests that the catalog api returns a list of catalogs
         """
@@ -35,9 +31,9 @@ class XISViewsTests(TestSetUp):
                 response.data, {"catalogs": ["catalog_1", "catalog_2"]}
             )
 
-    def test_xis_catalogs_view_error(self):
+    def test_xis_get_catalogs_view_error(self):
         """
-        Tests
+        Tests the catalog api returns a error when the status code is not 200
         """
         with patch("api.views.get_xis_catalogs") as mocked_get:
             mocked_get.return_value.status_code = 500
@@ -53,11 +49,12 @@ class XISViewsTests(TestSetUp):
                 "There was an error processing your request.",
             )
 
-    def test_xis_catalog_experiences_view(self):
+    def test_xis_get_catalog_experiences_view(self):
         """
-        Tests
+        Tests that the catalog api returns a list of experiences for a catalog
         """
         self.client.login(username=self.su_username, password=self.su_password)
+
         # call the function
         response = self.client.get(
             reverse(
@@ -81,9 +78,10 @@ class XISViewsTests(TestSetUp):
             },
         )
 
-    def test_xis_catalog_experiences_view_error_getting_catalogs(self):
+    def test_xis_get_catalog_experiences_view_error_getting_catalogs(self):
         """
-        Tests
+        Tests the catalog api returns a error when the status code returned
+        from get xis catalogs is not 200
         """
         self.client.login(username=self.su_username, password=self.su_password)
         self.mocked_get_xis_catalogs.return_value.status_code = 500
@@ -100,9 +98,10 @@ class XISViewsTests(TestSetUp):
             "There was an error processing your request",
         )
 
-    def test_xis_catalog_experiences_view_error_provider_not_found(self):
+    def test_xis_get_catalog_experiences_view_error_provider_not_found(self):
         """
-        Tests
+        Tests the catalog api returns an error when the provider is not a valid
+        provider.
         """
         self.client.login(username=self.su_username, password=self.su_password)
         # call the function
@@ -118,9 +117,10 @@ class XISViewsTests(TestSetUp):
             "The provider id does not exist in the XIS catalogs",
         )
 
-    def test_xis_catalog_experiences_view_error_getting_experiences(self):
+    def test_xis_get_catalog_experiences_view_error_getting_experiences(self):
         """
-        Tests
+        Tests the catalog api returns an error when the status code returned is
+        not 200
         """
         self.client.login(username=self.su_username, password=self.su_password)
         self.mocked_get_xis_experiences.return_value.status_code = 500
@@ -137,9 +137,9 @@ class XISViewsTests(TestSetUp):
             "There was an error processing your request",
         )
 
-    def test_xis_experience_view(self):
+    def test_xis_get_experience_view(self):
         """
-        Tests
+        Tests that the experience api returns the experience requested
         """
         self.client.login(username=self.su_username, password=self.su_password)
 
@@ -156,9 +156,10 @@ class XISViewsTests(TestSetUp):
         # assert the response
         self.assertEqual(response.data, {"experience": {"course": "title"}})
 
-    def test_xis_experience_error_getting_catalogs(self):
+    def test_xis_get_experience_error_getting_catalogs(self):
         """
-        Test
+        Test that the experience api returns an error when the status code is
+        not 200
         """
         self.client.login(username=self.su_username, password=self.su_password)
 
@@ -180,9 +181,10 @@ class XISViewsTests(TestSetUp):
             "There was an error processing your request",
         )
 
-    def test_xis_experience_error_provider_not_found(self):
+    def test_xis_get_experience_error_provider_not_found(self):
         """
-        Tests
+        Tests that the experience api returns an error when the provider is not
+        found in the list of available catalogs
         """
 
         self.client.login(username=self.su_username, password=self.su_password)
@@ -203,14 +205,13 @@ class XISViewsTests(TestSetUp):
             "The provider id does not exist in the XIS catalogs",
         )
 
-    def test_xis_experience_error_getting_experience(self):
+    def test_xis_get_experience_error_getting_experience(self):
         """
-        Tests
+        Tests that the experience api returns an error when there is an error
+        getting the experience
         """
 
         self.client.login(username=self.su_username, password=self.su_password)
-        self.mocked_get_xis_experiences.return_value.status_code = 200
-        self.mocked_get_xis_catalogs.return_value.status_code = 200
         self.mocked_get_xis_experience.return_value.status_code = 500
 
         response = self.client.get(
@@ -228,9 +229,3 @@ class XISViewsTests(TestSetUp):
             response.data["detail"],
             "There was an error processing your request",
         )
-
-    def test_xis_experience_error_getting_experience(self):
-        """
-        Test
-        """
-        pass

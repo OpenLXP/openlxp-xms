@@ -1,7 +1,5 @@
 import requests
 from configurations.models import XMSConfigurations
-from rest_framework import status
-from rest_framework.response import Response
 
 
 # helper function to get the catalogs from XIS
@@ -31,13 +29,18 @@ def get_xis_experience(provider_id, experience_id):
         experience_id (strint): the metadata_key_hash for the experience
 
     Returns:
-        list: [dictionary]
+        requests.Response: [dictionary]
+
+    Note:
+        Only returns one experience in an array if successful
     """
 
+    # get the XIS host from the configuration
     xis_metadata_experience_url = (
         XMSConfigurations.objects.first().target_xis_metadata_host
     )
 
+    # construct the url for the experience
     xis_metadata_experience_url = (
         xis_metadata_experience_url
         + f"?provider_id={provider_id}&metadata_key_hash_list={experience_id}"
@@ -54,7 +57,7 @@ def get_catalog_experiences(provider_id):
         provider_id (string): the query parameter for the catalog
 
     Returns:
-        list: [dictionary]
+        requests.Response: [dictionary]
     """
     xis_metadata_url = (
         XMSConfigurations.objects.first().target_xis_metadata_host

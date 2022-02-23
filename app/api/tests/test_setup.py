@@ -1,7 +1,6 @@
 # from core.models import XMSConfiguration
 from unittest.mock import patch
 
-from django.test import TestCase
 from rest_framework.test import APITestCase
 from users.models import UserProfile
 
@@ -50,11 +49,6 @@ class TestSetUp(APITestCase):
             }
         ]
         self.mocked_get_xis_experience.return_value.status_code = 200
-
-        # self.xms_config = \
-        #     XMSConfiguration(target_xis_metadata_api="www.test.com",
-        #                      xis_catalogs_api="www.catalogs.com")
-        # self.xms_config.save()
 
         return super().setUp()
 
