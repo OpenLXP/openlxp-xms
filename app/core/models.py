@@ -1,7 +1,8 @@
-from core.management.utils.notification import email_verification
 from django.db import models
 from django.forms import ValidationError
 from django.urls import reverse
+
+from core.management.utils.notification import email_verification
 
 
 class ReceiverEmailConfiguration(models.Model):
@@ -30,7 +31,8 @@ class SenderEmailConfiguration(models.Model):
     """Model for Email Configuration"""
 
     sender_email_address = models.EmailField(
-        max_length=254, help_text="Enter sender email address to send log data from"
+        max_length=254,
+        help_text="Enter sender email address to send log data from"
     )
 
     def save(self, *args, **kwargs):

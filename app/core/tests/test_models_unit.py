@@ -1,10 +1,6 @@
 from unittest.mock import patch
 
-from core.models import (
-    ReceiverEmailConfiguration,
-    SenderEmailConfiguration,
-)
-from django.core.exceptions import ValidationError
+from core.models import ReceiverEmailConfiguration, SenderEmailConfiguration
 from django.test import TestCase, tag
 
 
@@ -13,7 +9,9 @@ class ModelTests(TestCase):
 
     def test_create_receiver_config(self):
         """Test creating a receiver email configuration"""
-        receiver_config = ReceiverEmailConfiguration(email_address="test@email.com")
+        receiver_config = ReceiverEmailConfiguration(
+            email_address="test@email.com"
+            )
 
         with patch("core.models.email_verification") as email_verification:
             email_verification.return_value = email_verification
@@ -23,7 +21,9 @@ class ModelTests(TestCase):
 
     def test_create_sender_config(self):
         """Test creating a sender email config"""
-        sender_config = SenderEmailConfiguration(sender_email_address="test@email.com")
+        sender_config = SenderEmailConfiguration(
+            sender_email_address="test@email.com"
+            )
 
         with patch("core.models.email_verification") as email_verification:
             email_verification.return_value = email_verification

@@ -38,8 +38,8 @@ class XMSConfigurations(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Override the save method to check if the XMSConfigurations already exists.
-        Notifies the user if the model already exists.
+        Override the save method to check if the XMSConfigurations already
+        exists. Notifies the user if the model already exists.
         """
         if not self.pk and XMSConfigurations.objects.exists():
             raise ValidationError("XMSConfigurations model already exists")

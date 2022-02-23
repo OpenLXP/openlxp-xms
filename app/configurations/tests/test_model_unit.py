@@ -7,22 +7,26 @@ from django.test import TestCase, tag
 class XMSConfigurationModelTests(TestCase):
     def test_creating_xms_default_config(self):
         """
-        Test that the XMSConfigurations model can be created with default values.
+        Test that the XMSConfigurations model can be created with
+        default values.
         """
         XMSConfigurations.objects.create()
         # get the created object
         xms_config = XMSConfigurations.objects.first()
 
         self.assertEqual(
-            xms_config.target_xis_metadata_host, "http://localhost:8080/api/metadata/"
+            xms_config.target_xis_metadata_host,
+            "http://localhost:8080/api/metadata/"
         )
         self.assertEqual(
-            xms_config.target_xis_catalogs_host, "http://localhost:8080/api/catalogs/"
+            xms_config.target_xis_catalogs_host,
+            "http://localhost:8080/api/catalogs/"
         )
 
     def test_creating_xms_config_with_values(self):
         """
-        Test that the XMSConfigurations model can be created with custom values.
+        Test that the XMSConfigurations model can be created with
+        custom values.
         """
         XMSConfigurations.objects.create(
             target_xis_metadata_host="http://test:8080/api/metadata/",
@@ -32,10 +36,12 @@ class XMSConfigurationModelTests(TestCase):
         xms_config = XMSConfigurations.objects.first()
 
         self.assertEqual(
-            xms_config.target_xis_metadata_host, "http://test:8080/api/metadata/"
+            xms_config.target_xis_metadata_host,
+            "http://test:8080/api/metadata/"
         )
         self.assertEqual(
-            xms_config.target_xis_catalogs_host, "http://test:8080/api/catalogs/"
+            xms_config.target_xis_catalogs_host,
+            "http://test:8080/api/catalogs/"
         )
 
     def test_creating_multiple_xms_config(self):

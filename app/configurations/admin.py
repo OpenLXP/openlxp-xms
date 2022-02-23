@@ -1,5 +1,5 @@
-from dataclasses import fields
 from django.contrib import admin
+
 from configurations.models import XMSConfigurations
 
 # Register your models here.
