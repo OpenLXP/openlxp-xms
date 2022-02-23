@@ -1,6 +1,6 @@
-from django.urls import include, path
+from django.urls import path
 
-from .views import XISAvailableCatalogs, XISCatalog, XISCatalogExperience
+from .views import XISAvailableCatalogs, XISCatalog, XISExperience
 
 # namespace
 app_name = "api"
@@ -14,7 +14,7 @@ urlpatterns = [
     ),
     path(
         "catalogs/<str:provider_id>/<str:experience_id>/",
-        XISCatalogExperience.as_view(),
+        XISExperience.as_view(),
         name="experience",
     ),
 ]
