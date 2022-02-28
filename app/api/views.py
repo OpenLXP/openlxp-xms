@@ -83,7 +83,7 @@ class XISCatalog(APIView):
             {
                 "total": len(catalog_experiences_list),
                 "pages": len(catalog_experiences_chunks),
-                "courses": catalog_experiences_chunks,
+                "experiences": catalog_experiences_chunks,
             },
             status=status.HTTP_200_OK,
         )
