@@ -10,7 +10,7 @@ from api.utils.xis_helper_functions import (get_catalog_experiences,
 class XISAvailableCatalogs(APIView):
     """Catalog List View"""
 
-    def get(self, request):
+    def get(self, request) -> Response:
         """Returns the list of catalogs found in the XIS"""
 
         # get the url for the XIS catalogs
@@ -26,23 +26,24 @@ class XISAvailableCatalogs(APIView):
 
         # return the response
         return Response(
-            {"catalogs": xis_catalogs_response.json()}, status.HTTP_200_OK
+            xis_catalogs_response.json(), status.HTTP_200_OK
         )
 
 
 class XISCatalog(APIView):
     """Catalog View"""
 
-    def get(self, request, provider_id):
+    def get(self, request, provider_id) -> Response:
         """Returns all the courses in the corresponding catalog
 
         Args:
             provider_id (string): the query parameter for the catalog
         """
 
+        # get the available catalog data
         xis_catalogs_response = get_xis_catalogs()
 
-        # check if the request was successful
+        # check if the request was successful (GET)
         if xis_catalogs_response.status_code != 200:
             # return the error message
             return Response(
@@ -60,9 +61,10 @@ class XISCatalog(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        # get the experiences data for the catalog provided
         provider_catalog_response = get_catalog_experiences(provider_id)
 
-        # check if the request was successful
+        # check if the request was successful (GET)
         if provider_catalog_response.status_code != 200:
             # return the error message
             return Response(
@@ -70,10 +72,10 @@ class XISCatalog(APIView):
                 status=provider_catalog_response.status_code,
             )
 
+        # grab the experiences json
         catalog_experiences_list = provider_catalog_response.json()
 
-        # given the maximum number of items per page
-        # chunk the list into a list of lists of dictionaries
+        # chunk the experiences list into groups of 10
         catalog_experiences_chunks = [
             catalog_experiences_list[i:i + 10]
             for i in range(0, len(catalog_experiences_list), 10)
@@ -135,7 +137,7 @@ class XISExperience(APIView):
         # grab the first experience returned in the response
         experience = provider_experience_response.json()[0]
 
-        return Response({"experience": experience}, status=status.HTTP_200_OK)
+        return Response(experience, status=status.HTTP_200_OK)
 
     def post(self, request, provider_id, experience_id):
         """Returns the experience from the corresponding catalog

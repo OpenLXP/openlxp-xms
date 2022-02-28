@@ -28,7 +28,7 @@ class XISViewsTests(TestSetUp):
 
             # assert the response
             self.assertEqual(
-                response.data, {"catalogs": ["catalog_1", "catalog_2"]}
+                response.data,  ["catalog_1", "catalog_2"],
             )
 
     def test_xis_get_catalogs_view_error(self):
@@ -69,7 +69,7 @@ class XISViewsTests(TestSetUp):
             {
                 "total": 2,
                 "pages": 1,
-                "courses": [
+                "experiences": [
                     [
                         "experience_1",
                         "experience_2",
@@ -154,7 +154,7 @@ class XISViewsTests(TestSetUp):
         )
 
         # assert the response
-        self.assertEqual(response.data, {"experience": {"course": "title"}})
+        self.assertEqual(response.data, {"course": "title"})
 
     def test_xis_get_experience_error_getting_catalogs(self):
         """
