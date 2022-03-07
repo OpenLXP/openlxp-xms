@@ -227,6 +227,4 @@ OPEN_ENDPOINTS = [
     "/api/catalogs/",
     "/api/catalogs/[a-zA-Z0-9]+/",
     "/api/catalogs/[a-zA-Z0-9]+/[a-zA-Z0-9]+/",
-    "/api/experiences/",
-    "/api/experiences/[a-z0-9]+/",
 ]
