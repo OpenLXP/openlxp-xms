@@ -9,12 +9,12 @@ urlpatterns = [
     path("catalogs/", XISAvailableCatalogs.as_view(), name="catalogs"),
     path('catalogs/<str:provider_id>/', XISCatalog.as_view(), name='catalog'),
     path(
-        "catalogs/<str:provider_id>/experiences/",
+        "catalogs/<str:provider_id>",
         XISCatalog.as_view(),
         name="catalog-experiences",
     ),
     path(
-        "catalogs/<str:provider_id>/experiences/<str:experience_id>/",
+        "catalogs/<str:provider_id>/<str:experience_id>/",
         XISExperience.as_view(),
         name="experience",
     ),
