@@ -2,9 +2,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.utils.xis_helper_functions import (get_catalog_experiences,
-                                            get_xis_catalogs,
-                                            get_xis_experience)
+from api.utils.xis_helper_functions import (
+    get_catalog_experiences,
+    get_xis_catalogs,
+    get_xis_experience,
+)
 
 
 class XISAvailableCatalogs(APIView):
@@ -25,13 +27,13 @@ class XISAvailableCatalogs(APIView):
             )
 
         # return the response
-        return Response(
-            xis_catalogs_response.json(), status.HTTP_200_OK
-        )
+        return Response(xis_catalogs_response.json(), status.HTTP_200_OK)
 
 
 class XISCatalog(APIView):
     """Catalog View"""
+    
+    
 
     def get(self, request, provider_id) -> Response:
         """Returns all the courses in the corresponding catalog
