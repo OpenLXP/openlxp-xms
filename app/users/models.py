@@ -12,7 +12,7 @@ class UserProfileManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         """
-        Creates a new user profile
+        Creates a new user profilen
         """
 
         if not email:

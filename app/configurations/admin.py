@@ -9,8 +9,8 @@ from configurations.models import XMSConfigurations
 class XMSConfigurationsAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "target_xis_metadata_host",
-        "target_xis_catalogs_host",
+        "target_xis_host",
+        # "target_xis_catalogs_host",
     )
     # fields to display in the admin site
     fieldsets = (
@@ -19,8 +19,8 @@ class XMSConfigurationsAdmin(admin.ModelAdmin):
             {
                 # on the same line
                 "fields": (
-                    "target_xis_metadata_host",
-                    "target_xis_catalogs_host",
+                    "target_xis_host",
+                    # "target_xis_catalogs_host",
                 )
             },
         ),

@@ -1,4 +1,7 @@
+import json
+
 import requests
+
 from configurations.models import XMSConfigurations
 
 
@@ -12,7 +15,7 @@ def get_xis_catalogs():
 
     # get the XMS configuration for the XIS catalog host
     xis_catalogs_url = (
-        XMSConfigurations.objects.first().target_xis_catalogs_host
+        XMSConfigurations.objects.first().target_xis_host
     )
 
     # request the catalogs from the XIS
@@ -37,16 +40,52 @@ def get_xis_experience(provider_id, experience_id):
 
     # get the XIS host from the configuration
     xis_metadata_experience_url = (
-        XMSConfigurations.objects.first().target_xis_metadata_host
+        XMSConfigurations.objects.first().target_xis_host
     )
 
     # construct the url for the experience
     xis_metadata_experience_url = (
-        xis_metadata_experience_url
-        + f"?provider_id={provider_id}&metadata_key_hash_list={experience_id}"
+            xis_metadata_experience_url
+            + f"/{provider_id}/{experience_id}"
     )
 
     return requests.get(xis_metadata_experience_url)
+
+
+# helper function to post an experience from XIS
+def post_xis_experience(data, provider_id, experience_id):
+    """
+    Post a specific experience from a specific catalog
+
+    Args:
+        provider_id (string): the query parameter for the catalog
+        experience_id (string): the metadata_key_hash for the experience
+
+    Returns:
+        requests.Response: [dictionary]
+
+    Note:
+        Only returns one experience in an array if successful
+    """
+
+    # get the XIS host from the configuration
+    xis_metadata_experience_url = (
+        XMSConfigurations.objects.first().target_xis_host
+    )
+
+    # construct the url for the experience
+    xis_metadata_experience_url = (
+            xis_metadata_experience_url
+            + f"/{provider_id}/{experience_id}"
+    )
+
+    # formatting the request data to JSON
+    dataJSON = json.dumps(data)
+
+    headers = {'content-type': 'application/json'}
+
+    return requests.post(xis_metadata_experience_url, data=dataJSON,
+                         timeout=30, headers=headers)
 
 
 # helper function to get all experiences from a catalog in XIS
@@ -60,9 +99,9 @@ def get_catalog_experiences(provider_id):
         requests.Response: [dictionary]
     """
     xis_metadata_url = (
-        XMSConfigurations.objects.first().target_xis_metadata_host
+        XMSConfigurations.objects.first().target_xis_host
     )
-    xis_metadata_url = xis_metadata_url + f"?provider={provider_id}"
+    xis_metadata_url = xis_metadata_url + f"/{provider_id}"
 
     # request the experiences from the specified catalog
     return requests.get(xis_metadata_url)

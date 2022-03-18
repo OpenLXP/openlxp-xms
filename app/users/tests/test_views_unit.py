@@ -1,6 +1,7 @@
 from django.test import tag
 from django.urls import reverse
 from rest_framework import status
+
 from users.models import UserProfile
 
 from .test_setup import TestSetUp

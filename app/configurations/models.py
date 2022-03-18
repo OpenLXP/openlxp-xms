@@ -13,15 +13,11 @@ class XMSConfigurations(models.Model):
         verbose_name = "XMS Connection"
 
     # the following fields are required for XMS to connect to XIS
-    target_xis_metadata_host = models.CharField(
-        help_text="Enter the XIS host to query metadata",
+
+    target_xis_host = models.CharField(
+        help_text="Enter the XIS host to query data",
         max_length=200,
-        default="http://localhost:8080/api/metadata/",
-    )
-    target_xis_catalogs_host = models.CharField(
-        help_text="Enter the XIS host to get available catalogs",
-        max_length=200,
-        default="http://localhost:8080/api/catalogs/",
+        default="http://openlxp-xis:8020/api/managed-data/catalogs",
     )
 
     def get_absolute_url(self):

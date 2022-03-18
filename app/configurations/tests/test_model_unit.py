@@ -1,9 +1,10 @@
-from configurations.models import XMSConfigurations
 from django.forms import ValidationError
 from django.test import TestCase, tag
 
+from configurations.models import XMSConfigurations
 
-@tag("xms_config_model")
+
+@tag("unit")
 class XMSConfigurationModelTests(TestCase):
     def test_creating_xms_default_config(self):
         """
@@ -15,12 +16,8 @@ class XMSConfigurationModelTests(TestCase):
         xms_config = XMSConfigurations.objects.first()
 
         self.assertEqual(
-            xms_config.target_xis_metadata_host,
-            "http://localhost:8080/api/metadata/"
-        )
-        self.assertEqual(
-            xms_config.target_xis_catalogs_host,
-            "http://localhost:8080/api/catalogs/"
+            xms_config.target_xis_host,
+            "http://openlxp-xis:8020/api/managed-data/catalogs"
         )
 
     def test_creating_xms_config_with_values(self):
@@ -29,19 +26,14 @@ class XMSConfigurationModelTests(TestCase):
         custom values.
         """
         XMSConfigurations.objects.create(
-            target_xis_metadata_host="http://test:8080/api/metadata/",
-            target_xis_catalogs_host="http://test:8080/api/catalogs/",
+            target_xis_host="http://test:8080/api/metadata/",
         )
         # get the created object
         xms_config = XMSConfigurations.objects.first()
 
         self.assertEqual(
-            xms_config.target_xis_metadata_host,
+            xms_config.target_xis_host,
             "http://test:8080/api/metadata/"
-        )
-        self.assertEqual(
-            xms_config.target_xis_catalogs_host,
-            "http://test:8080/api/catalogs/"
         )
 
     def test_creating_multiple_xms_config(self):
@@ -49,12 +41,10 @@ class XMSConfigurationModelTests(TestCase):
         Test that a user cannot create multiple XMSConfigurations models.
         """
         XMSConfigurations.objects.create(
-            target_xis_metadata_host="http://test:8080/api/metadata/",
-            target_xis_catalogs_host="http://test:8080/api/catalogs/",
+            target_xis_host="http://test:8080/api/metadata/",
         )
         with self.assertRaises(ValidationError):
             # attempt to save another XMSConfigurations model
             XMSConfigurations.objects.create(
-                target_xis_metadata_host="http://test:8080/api/metadata/",
-                target_xis_catalogs_host="http://test:8080/api/catalogs/",
+                target_xis_host="http://test:8080/api/metadata/",
             )

@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 
 from api.utils.xis_helper_functions import (get_catalog_experiences,
                                             get_xis_catalogs,
-                                            get_xis_experience)
+                                            get_xis_experience,
+                                            post_xis_experience)
 
 
 class XISAvailableCatalogs(APIView):
@@ -54,7 +55,7 @@ class XISCatalog(APIView):
             return Response(
                 {
                     "detail": "The provider id does not exist in the XIS "
-                    "catalogs"
+                              "catalogs"
                 },
                 status=status.HTTP_404_NOT_FOUND,
             )
@@ -107,7 +108,7 @@ class XISExperience(APIView):
             # return the error message
             return Response(
                 {"detail": "There was an error processing your request"},
-                status=xis_catalogs_response.status_code,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # validate that the provider_id is valid
@@ -115,7 +116,7 @@ class XISExperience(APIView):
             return Response(
                 {
                     "detail": "The provider id does not exist in the XIS "
-                    "catalogs"
+                              "catalogs"
                 },
                 status=status.HTTP_404_NOT_FOUND,
             )
@@ -137,7 +138,7 @@ class XISExperience(APIView):
 
         return Response(experience, status=status.HTTP_200_OK)
 
-    def post(self, request, provider_id, experience_id):
+    def post(self, request, provider_id, experience_id) -> Response:
         """Returns the experience from the corresponding catalog
 
         Args:
@@ -145,4 +146,53 @@ class XISExperience(APIView):
             experience_id (string): the metadata_key_hash for the experience
         """
 
-        pass
+        xis_catalogs_response = get_xis_catalogs()
+
+        # check if the request was successful
+        if xis_catalogs_response.status_code != 200:
+            # return the error message
+            return Response(
+                {"detail": "There was an error processing your request"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # validate that the provider_id is valid
+        if provider_id not in xis_catalogs_response.json():
+            return Response(
+                {
+                    "detail": "The provider id does not exist in the XIS "
+                              "catalogs"
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        provider_experience_response = get_xis_experience(
+            provider_id=provider_id, experience_id=experience_id
+        )
+
+        # check if the request was successful
+        if provider_experience_response.status_code != 200:
+            # return the error message
+            return Response(
+                {"detail": "The experience does not exist in the XIS "
+                           "catalogs"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        provider_experience_update_response = \
+            post_xis_experience(request.data, provider_id=provider_id,
+                                experience_id=experience_id)
+
+        # check if the request was successful
+        if provider_experience_update_response.status_code != 201:
+            # return the error message
+            return Response(
+                {"detail": "There was an error processing your request"},
+                status=provider_experience_update_response.status_code,
+            )
+
+        # grab the first experience returned in the response
+        experience = provider_experience_update_response.json()
+
+        return Response(experience,
+                        status=provider_experience_update_response.status_code)

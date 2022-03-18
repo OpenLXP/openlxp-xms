@@ -1,14 +1,15 @@
 from unittest.mock import patch
 
+from ddt import ddt
+from django.test import TestCase, tag
+
 from api.utils.xis_helper_functions import (get_catalog_experiences,
                                             get_xis_catalogs,
                                             get_xis_experience)
 from configurations.models import XMSConfigurations
-from ddt import ddt
-from django.test import TestCase, tag
 
 
-@tag("xis_utils")
+@tag("unit")
 @ddt
 class TestXISUtils(TestCase):
     """

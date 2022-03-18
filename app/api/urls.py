@@ -7,10 +7,8 @@ app_name = "api"
 
 urlpatterns = [
     path("catalogs/", XISAvailableCatalogs.as_view(), name="catalogs"),
-    path('catalogs/<str:provider_id>', XISCatalog.as_view(), name='catalog'),
-    path(
-        "catalogs/<str:provider_id>/<str:experience_id>",
-        XISExperience.as_view(),
-        name="experience",
-    ),
+    path('catalogs/<str:provider_id>', XISCatalog.as_view(),
+         name='catalog-experiences'),
+    path("catalogs/<str:provider_id>/<str:experience_id>",
+         XISExperience.as_view(), name="experience"),
 ]

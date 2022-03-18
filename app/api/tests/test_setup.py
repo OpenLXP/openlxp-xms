@@ -1,7 +1,7 @@
-# from core.models import XMSConfiguration
 from unittest.mock import patch
 
 from rest_framework.test import APITestCase
+
 from users.models import UserProfile
 
 
@@ -49,6 +49,19 @@ class TestSetUp(APITestCase):
             }
         ]
         self.mocked_get_xis_experience.return_value.status_code = 200
+
+        self.post_experience_data_dict = {
+            "course": "title",
+        }
+        self.mocked_post_xis_experience = patch(
+            "api.views.post_xis_experience"
+        ).start()
+        self.mocked_post_xis_experience.return_value.json.return_value = [
+            {
+                "course": "title",
+            }
+        ]
+        self.mocked_post_xis_experience.return_value.status_code = 201
 
         return super().setUp()
 
