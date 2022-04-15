@@ -19,8 +19,8 @@ from django.urls import path
 from django.urls.conf import include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
     path('api/', include('api.urls')),
-    path('api/', include('users.urls')),
-    url('', include('openlxp_authentication.urls')),
+    path("api/", include("users.urls")),
+    url("", include("openlxp_authentication.urls")),
 ]

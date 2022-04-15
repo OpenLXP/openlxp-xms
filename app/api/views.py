@@ -1,146 +1,198 @@
-import logging
-
-import requests
-from core.models import XMSConfiguration
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.utils import json
 from rest_framework.views import APIView
 
-logger = logging.getLogger('dict_config_logger')
+from api.utils.xis_helper_functions import (get_catalog_experiences,
+                                            get_xis_catalogs,
+                                            get_xis_experience,
+                                            post_xis_experience)
 
 
-class CatalogsView(APIView):
+class XISAvailableCatalogs(APIView):
     """Catalog List View"""
 
-    def get(self, request):
-        """Handles listing all available catalogs"""
-        errorMsg = {
-            "message": "Error fetching catalogs please check the logs."
-        }
+    def get(self, request) -> Response:
+        """Returns the list of catalogs found in the XIS"""
 
-        try:
-            api_url = XMSConfiguration.objects.first()\
-                .xis_catalogs_api
+        # get the url for the XIS catalogs
+        xis_catalogs_response = get_xis_catalogs()
 
-            # make API call
-            response = requests.get(api_url)
-            responseJSON = json.dumps(response.json())
-            responseDict = json.loads(responseJSON)
-            logger.info(responseJSON)
+        # check if the request was successful
+        if xis_catalogs_response.status_code != 200:
+            # return the error message
+            return Response(
+                {"detail": "There was an error processing your request."},
+                status=xis_catalogs_response.status_code,
+            )
 
-            if (response.status_code == 200):
-                return Response(responseDict,
-                                status.HTTP_200_OK)
-            else:
-                return Response(responseDict,
-                                status.HTTP_503_SERVICE_UNAVAILABLE)
-        except requests.exceptions.RequestException as e:
-            errorMsg = {"message": "error reaching out to configured XIS API; "
-                        + "please check the XIS logs"}
-            logger.error(e)
-
-            return Response(errorMsg,
-                            status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        except Exception as err:
-            logger.error(err)
-
-            return Response(errorMsg,
-                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # return the response
+        return Response(xis_catalogs_response.json(), status.HTTP_200_OK)
 
 
-class ListExperiencesView(APIView):
-    """Experiences List View"""
+class XISCatalog(APIView):
+    """Catalog View"""
 
-    def get(self, request):
-        """Handles listing requests for experiences"""
-        errorMsg = {
-            "message": "Error fetching experiences please check the logs."
-        }
+    def get(self, request, provider_id) -> Response:
+        """Returns all the courses in the corresponding catalog
 
-        try:
-            metadata_xis_api = XMSConfiguration.objects.first()\
-                .target_xis_metadata_api
-            api_url = metadata_xis_api + '?' + request.META['QUERY_STRING']
+        Args:
+            provider_id (string): the query parameter for the catalog
+        """
 
-            # make API call
-            response = requests.get(api_url)
-            responseJSON = json.dumps(response.json())
-            responseDict = json.loads(responseJSON)
-            logger.info(responseJSON)
+        # get the available catalog data
+        xis_catalogs_response = get_xis_catalogs()
 
-            if (response.status_code == 200):
-                return Response(responseDict,
-                                status.HTTP_200_OK)
-            else:
-                return Response(responseDict,
-                                status.HTTP_503_SERVICE_UNAVAILABLE)
-        except requests.exceptions.RequestException as e:
-            errorMsg = {"message": "error reaching out to configured XIS API; "
-                        + "please check the XIS logs"}
-            logger.error(e)
+        # check if the request was successful (GET)
+        if xis_catalogs_response.status_code != 200:
+            # return the error message
+            return Response(
+                {"detail": "There was an error processing your request"},
+                status=xis_catalogs_response.status_code,
+            )
 
-            return Response(errorMsg,
-                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # validate that the provider_id is valid
+        if provider_id not in xis_catalogs_response.json():
+            return Response(
+                {
+                    "detail": "The provider id does not exist in the XIS "
+                              "catalogs"
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
-        except Exception as err:
-            logger.error(err)
+        # get the experiences data for the catalog provided
+        provider_catalog_response = get_catalog_experiences(provider_id)
 
-            return Response(errorMsg,
-                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # check if the request was successful (GET)
+        if provider_catalog_response.status_code != 200:
+            # return the error message
+            return Response(
+                {"detail": "There was an error processing your request"},
+                status=provider_catalog_response.status_code,
+            )
+
+        # grab the experiences json
+        catalog_experiences_list = provider_catalog_response.json()
+
+        # chunk the experiences list into groups of 10
+        catalog_experiences_chunks = [
+            catalog_experiences_list[i:i + 10]
+            for i in range(0, len(catalog_experiences_list), 10)
+        ]
+
+        return Response(
+            {
+                "total": len(catalog_experiences_list),
+                "pages": len(catalog_experiences_chunks),
+                "experiences": catalog_experiences_chunks,
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
-class ExperiencesView(APIView):
-    """Experiences View"""
+class XISExperience(APIView):
+    """Experience from a specific catalog"""
 
-    def get(self, request, id):
-        """Fetches the record of the corresponding course id"""
-        return self._experience(request, id)
+    def get(self, request, provider_id, experience_id) -> Response:
+        """Returns the experience from the corresponding catalog
 
-    def patch(self, request, id):
-        """Modifies the record of the corresponding course id"""
-        return self._experience(request, id)
+        Args:
+            provider_id (string): the query parameter for the catalog
+            experience_id (string): the metadata_key_hash for the experience
+        """
 
-    def _experience(self, request, id):
-        """This method defines an API to fetch or modify the record of the
-            corresponding course id"""
-        errorMsg = {
-            "message": "Error fetching experiences please check the logs."
-        }
+        xis_catalogs_response = get_xis_catalogs()
 
-        try:
-            metadata_xis_api = XMSConfiguration.objects.first()\
-                .target_xis_metadata_api
-            api_url = metadata_xis_api + id + '/'
+        # check if the request was successful
+        if xis_catalogs_response.status_code != 200:
+            # return the error message
+            return Response(
+                {"detail": "There was an error processing your request"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-            if request.method == 'GET':
-                # make API call
-                response = requests.get(api_url)
-            elif request.method == 'PATCH':
-                response = requests.patch(api_url, json=request.data)
+        # validate that the provider_id is valid
+        if provider_id not in xis_catalogs_response.json():
+            return Response(
+                {
+                    "detail": "The provider id does not exist in the XIS "
+                              "catalogs"
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
-            responseJSON = json.dumps(response.json())
-            responseDict = json.loads(responseJSON)
-            logger.info(responseJSON)
+        provider_experience_response = get_xis_experience(
+            provider_id=provider_id, experience_id=experience_id
+        )
 
-            if (response.status_code == 200):
+        # check if the request was successful
+        if provider_experience_response.status_code != 200:
+            # return the error message
+            return Response(
+                {"detail": "There was an error processing your request"},
+                status=provider_experience_response.status_code,
+            )
 
-                return Response(responseDict,
-                                status.HTTP_200_OK)
-            else:
-                return Response(responseDict,
-                                status.HTTP_503_SERVICE_UNAVAILABLE)
-        except requests.exceptions.RequestException as e:
-            errorMsg = {"message": "error reaching out to configured XIS API; "
-                        + "please check the XIS logs"}
-            logger.error(e)
+        # grab the first experience returned in the response
+        experience = provider_experience_response.json()[0]
 
-            return Response(errorMsg,
-                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(experience, status=status.HTTP_200_OK)
 
-        except Exception as err:
-            logger.error(err)
+    def post(self, request, provider_id, experience_id) -> Response:
+        """Returns the experience from the corresponding catalog
 
-            return Response(errorMsg,
-                            status.HTTP_500_INTERNAL_SERVER_ERROR)
+        Args:
+            provider_id (string): the query parameter for the catalog
+            experience_id (string): the metadata_key_hash for the experience
+        """
+
+        xis_catalogs_response = get_xis_catalogs()
+
+        # check if the request was successful
+        if xis_catalogs_response.status_code != 200:
+            # return the error message
+            return Response(
+                {"detail": "There was an error processing your request"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # validate that the provider_id is valid
+        if provider_id not in xis_catalogs_response.json():
+            return Response(
+                {
+                    "detail": "The provider id does not exist in the XIS "
+                              "catalogs"
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        provider_experience_response = get_xis_experience(
+            provider_id=provider_id, experience_id=experience_id
+        )
+
+        # check if the request was successful
+        if provider_experience_response.status_code != 200:
+            # return the error message
+            return Response(
+                {"detail": "The experience does not exist in the XIS "
+                           "catalogs"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        provider_experience_update_response = \
+            post_xis_experience(request.data, provider_id=provider_id,
+                                experience_id=experience_id)
+
+        # check if the request was successful
+        if provider_experience_update_response.status_code != 201:
+            # return the error message
+            return Response(
+                {"detail": "There was an error processing your request"},
+                status=provider_experience_update_response.status_code,
+            )
+
+        # grab the first experience returned in the response
+        experience = provider_experience_update_response.json()
+
+        return Response(experience,
+                        status=provider_experience_update_response.status_code)
