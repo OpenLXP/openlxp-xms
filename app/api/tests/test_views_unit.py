@@ -1,149 +1,355 @@
-import json
 from unittest.mock import patch
 
 from ddt import ddt
 from django.test import tag
 from django.urls import reverse
-from requests.exceptions import HTTPError
 from rest_framework import status
 
-from .test_setup import TestSetUp
+from api.tests.test_setup import TestSetUp
 
 
-@tag('unit')
+@tag("unit")
 @ddt
-class ViewTests(TestSetUp):
+class XISViewsTests(TestSetUp):
+    def test_xis_get_catalogs_view(self):
+        """
+        Tests that the catalog api returns a list of catalogs
+        """
 
-    def test_get_catalogs(self):
-        """Test that calling the endpoint /api/catalogs returns a list of
-            catalogs"""
-        url = reverse('api:catalogs')
+        # mock the response from the get_xis_catalogs function
+        with patch("api.views.get_xis_catalogs") as mocked_get:
+            mocked_get.return_value.json.return_value = [
+                "catalog_1",
+                "catalog_2",
+            ]
+            mocked_get.return_value.status_code = 200
 
-        with patch('api.views.requests') as requests:
-            http_resp = requests.return_value
-            requests.get.return_value = http_resp
-            http_resp.json.return_value = [{
-                "test": "value"
-            }]
-            http_resp.status_code = 200
+            # call the function
+            response = self.client.get(reverse("api:catalogs"))
 
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            # assert the response
+            self.assertEqual(
+                response.data, ["catalog_1", "catalog_2"],
+            )
 
-    def test_get_catalogs_error(self):
-        """Test that calling the endpoint /api/catalogs returns an
-            http error if an exception a thrown while reaching out to XIS"""
-        url = reverse('api:catalogs')
-        errorMsg = "error reaching out to configured XIS API; " + \
-                   "please check the XIS logs"
+    def test_xis_get_catalogs_view_error(self):
+        """
+        Tests the catalog api returns a error when the status code is not 200
+        """
+        with patch("api.views.get_xis_catalogs") as mocked_get:
+            mocked_get.return_value.status_code = 500
 
-        with patch('api.views.requests.get') as get_request:
-            get_request.side_effect = [HTTPError]
+            response = self.client.get(reverse("api:catalogs"))
 
-            response = self.client.get(url)
-            responseDict = json.loads(response.content)
+            # assert the response
+            self.assertEqual(
+                response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+            self.assertEqual(
+                response.data["detail"],
+                "There was an error processing your request.",
+            )
 
-            self.assertEqual(response.status_code,
-                             status.HTTP_500_INTERNAL_SERVER_ERROR)
-            self.assertEqual(responseDict['message'], errorMsg)
+    def test_xis_get_catalog_experiences_view(self):
+        """
+        Tests that the catalog api returns a list of experiences for a catalog
+        """
+        self.client.login(username=self.su_username, password=self.su_password)
 
-    def test_get_experiences(self):
-        """Test that calling /api/experiences returns a list of
-            experiences"""
-        url = reverse('api:experiences')
+        # call the function
+        response = self.client.get(
+            reverse(
+                "api:catalog-experiences",
+                kwargs={"provider_id": "catalog_1"},
+            )
+        )
 
-        with patch('api.views.requests') as requests:
-            http_resp = requests.return_value
-            requests.get.return_value = http_resp
-            http_resp.json.return_value = [{
-                "test": "value"
-            }]
-            http_resp.status_code = 200
+        # assert the response
+        self.assertEqual(
+            response.data,
+            {
+                "total": 2,
+                "pages": 1,
+                "experiences": [
+                    [
+                        "experience_1",
+                        "experience_2",
+                    ]
+                ],
+            },
+        )
 
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_xis_get_catalog_experiences_view_error_getting_catalogs(self):
+        """
+        Tests the catalog api returns a error when the status code returned
+        from get xis catalogs is not 200
+        """
+        self.client.login(username=self.su_username, password=self.su_password)
+        self.mocked_get_xis_catalogs.return_value.status_code = 500
+        # call the function
+        response = self.client.get(
+            reverse(
+                "api:catalog-experiences",
+                kwargs={"provider_id": "catalog_1"},
+            )
+        )
+        # assert the response  returns a 500
+        self.assertEqual(
+            response.data["detail"],
+            "There was an error processing your request",
+        )
 
-    def test_get_experiences_error(self):
-        """Test that calling /api/experiences returns an error if the call
-            to the XIS throws an http error"""
-        url = reverse('api:experiences')
-        errorMsg = "error reaching out to configured XIS API; " + \
-                   "please check the XIS logs"
+    def test_xis_get_catalog_experiences_view_error_provider_not_found(self):
+        """
+        Tests the catalog api returns an error when the provider is not a valid
+        provider.
+        """
+        self.client.login(username=self.su_username, password=self.su_password)
+        # call the function
+        response = self.client.get(
+            reverse(
+                "api:catalog-experiences",
+                kwargs={"provider_id": "catalog_3"},
+            )
+        )
+        # assert the response  returns a 500
+        self.assertEqual(
+            response.data["detail"],
+            "The provider id does not exist in the XIS catalogs",
+        )
 
-        with patch('api.views.requests.get') as get_request:
-            get_request.side_effect = [HTTPError]
+    def test_xis_get_catalog_experiences_view_error_getting_experiences(self):
+        """
+        Tests the catalog api returns an error when the status code returned is
+        not 200
+        """
+        self.client.login(username=self.su_username, password=self.su_password)
+        self.mocked_get_xis_experiences.return_value.status_code = 500
+        # call the function
+        response = self.client.get(
+            reverse(
+                "api:catalog-experiences",
+                kwargs={"provider_id": "catalog_2"},
+            )
+        )
+        # assert the response  returns a 500
+        self.assertEqual(
+            response.data["detail"],
+            "There was an error processing your request",
+        )
 
-            response = self.client.get(url)
-            responseDict = json.loads(response.content)
+    def test_xis_get_experience_view(self):
+        """
+        Tests that the experience api returns the experience requested
+        """
+        self.client.login(username=self.su_username, password=self.su_password)
 
-            self.assertEqual(response.status_code,
-                             status.HTTP_500_INTERNAL_SERVER_ERROR)
-            self.assertEqual(responseDict['message'], errorMsg)
+        response = self.client.get(
+            reverse(
+                "api:experience",
+                kwargs={
+                    "provider_id": "catalog_1",
+                    "experience_id": "experience_1",
+                },
+            ),
+        )
 
-    def test_get_experience(self):
-        """Test that calling /api/experience/id returns an experience"""
-        doc_id = '123456'
-        url = reverse('api:experience', args=(doc_id,))
+        # assert the response
+        self.assertEqual(response.data, {"course": "title"})
 
-        with patch('api.views.requests') as requests:
-            http_resp = requests.return_value
-            requests.get.return_value = http_resp
-            http_resp.json.return_value = {
-                "test": "value"
-            }
-            http_resp.status_code = 200
+    def test_xis_get_experience_error_getting_catalogs(self):
+        """
+        Test that the experience api returns an error when the status code is
+        not 200
+        """
+        self.client.login(username=self.su_username, password=self.su_password)
 
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.mocked_get_xis_catalogs.return_value.status_code = 500
 
-    def test_get_experience_error(self):
-        """Test that calling /api/experience/id returns an error if the call
-            to the XIS throws an http error"""
-        doc_id = '123456'
-        url = reverse('api:experience', args=(doc_id,))
-        errorMsg = "error reaching out to configured XIS API; " + \
-                   "please check the XIS logs"
+        response = self.client.get(
+            reverse(
+                "api:experience",
+                kwargs={
+                    "provider_id": "catalog_1",
+                    "experience_id": "experience_1",
+                },
+            ),
+        )
 
-        with patch('api.views.requests.get') as get_request:
-            get_request.side_effect = [HTTPError]
+        # assert the response
+        self.assertEqual(
+            response.data["detail"],
+            "There was an error processing your request",
+        )
 
-            response = self.client.get(url)
-            responseDict = json.loads(response.content)
+    def test_xis_get_experience_error_provider_not_found(self):
+        """
+        Tests that the experience api returns an error when the provider is not
+        found in the list of available catalogs
+        """
 
-            self.assertEqual(response.status_code,
-                             status.HTTP_500_INTERNAL_SERVER_ERROR)
-            self.assertEqual(responseDict['message'], errorMsg)
+        self.client.login(username=self.su_username, password=self.su_password)
 
-    def test_patch_experience(self):
-        """Test that calling /api/experience/id updates an experience"""
-        doc_id = '123456'
-        url = reverse('api:experience', args=(doc_id,))
+        response = self.client.get(
+            reverse(
+                "api:experience",
+                kwargs={
+                    "provider_id": "catalog_3",
+                    "experience_id": "experience_1",
+                },
+            ),
+        )
 
-        with patch('api.views.requests') as requests:
-            http_resp = requests.return_value
-            requests.patch.return_value = http_resp
-            http_resp.json.return_value = {
-                "test": "value"
-            }
-            http_resp.status_code = 200
+        # assert the response
+        self.assertEqual(
+            response.data["detail"],
+            "The provider id does not exist in the XIS catalogs",
+        )
 
-            response = self.client.patch(url)
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_xis_get_experience_error_getting_experience(self):
+        """
+        Tests that the experience api returns an error when there is an error
+        getting the experience
+        """
 
-    def test_patch_experience_error(self):
-        """Test that calling /api/experience/id returns an error if the call
-            to the XIS throws an http error"""
-        doc_id = '123456'
-        url = reverse('api:experience', args=(doc_id,))
-        errorMsg = "error reaching out to configured XIS API; " + \
-                   "please check the XIS logs"
+        self.client.login(username=self.su_username, password=self.su_password)
+        self.mocked_get_xis_experience.return_value.status_code = 500
 
-        with patch('api.views.requests.patch') as patch_request:
-            patch_request.side_effect = [HTTPError]
+        response = self.client.get(
+            reverse(
+                "api:experience",
+                kwargs={
+                    "provider_id": "catalog_2",
+                    "experience_id": "experience_1",
+                },
+            ),
+        )
 
-            response = self.client.patch(url)
-            responseDict = json.loads(response.content)
+        # assert the response
+        self.assertEqual(
+            response.data["detail"],
+            "There was an error processing your request",
+        )
 
-            self.assertEqual(response.status_code,
-                             status.HTTP_500_INTERNAL_SERVER_ERROR)
-            self.assertEqual(responseDict['message'], errorMsg)
+    def test_xis_post_experience_view(self):
+        """
+        Tests that the experience api writes and return the response for the
+         experience requested
+        """
+        self.client.login(username=self.su_username, password=self.su_password)
+
+        response = self.client.post(
+            path=reverse(
+                "api:experience",
+                kwargs={
+                    "provider_id": "catalog_1",
+                    "experience_id": "experience_1",
+                },
+            ),
+            data=self.post_experience_data_dict,
+        )
+
+        self.assertEqual(response.status_code, 201)
+
+    def test_xis_post_experience_error_getting_catalogs(self):
+        """
+        Test that the experience api returns an error when the status code is
+        not 200
+        """
+        self.client.login(username=self.su_username, password=self.su_password)
+
+        self.mocked_get_xis_catalogs.return_value.status_code = 500
+
+        response = self.client.post(
+            reverse(
+                "api:experience",
+                kwargs={
+                    "provider_id": "catalog_1",
+                    "experience_id": "experience_1",
+                },
+            ),
+            data=self.post_experience_data_dict,
+        )
+
+        # assert the response
+        self.assertEqual(
+            response.data["detail"],
+            "There was an error processing your request",
+        )
+
+    def test_xis_post_experience_error_provider_not_found(self):
+        """
+        Tests that the experience api returns an error when the provider is not
+        found in the list of available catalogs
+        """
+
+        self.client.login(username=self.su_username, password=self.su_password)
+
+        response = self.client.post(
+            reverse(
+                "api:experience",
+                kwargs={
+                    "provider_id": "catalog_3",
+                    "experience_id": "experience_1",
+                },
+            ),
+            data=self.post_experience_data_dict,
+        )
+
+        # assert the response
+        self.assertEqual(
+            response.data["detail"],
+            "The provider id does not exist in the XIS catalogs",
+        )
+
+    def test_xis_post_experience_error_getting_experience(self):
+        """
+        Tests that the experience api returns an error when there is an error
+        getting the experience
+        """
+
+        self.client.login(username=self.su_username, password=self.su_password)
+        self.mocked_get_xis_experience.return_value.status_code = 500
+
+        response = self.client.post(
+            reverse(
+                "api:experience",
+                kwargs={
+                    "provider_id": "catalog_2",
+                    "experience_id": "experience_1",
+                },
+            ),
+            data=self.post_experience_data_dict,
+        )
+
+        # assert the response
+        self.assertEqual(
+            response.data["detail"],
+            "The experience does not exist in the XIS catalogs",
+        )
+
+    def test_xis_post_experience_error_posting_experience(self):
+        """
+        Tests that the experience api returns an error when there is an error
+        getting the experience
+        """
+
+        self.client.login(username=self.su_username, password=self.su_password)
+        self.mocked_post_xis_experience.return_value.status_code = 500
+
+        response = self.client.post(
+            reverse(
+                "api:experience",
+                kwargs={
+                    "provider_id": "catalog_2",
+                    "experience_id": "experience_1",
+                },
+            ),
+            data=self.post_experience_data_dict,
+        )
+
+        # assert the response
+        self.assertEqual(
+            response.data["detail"],
+            "There was an error processing your request",
+        )

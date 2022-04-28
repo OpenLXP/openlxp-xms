@@ -1,17 +1,14 @@
 from django.urls import path
-from rest_framework.routers import DefaultRouter
 
-from api import views
+from .views import XISAvailableCatalogs, XISCatalog, XISExperience
 
-router = DefaultRouter()
-
-app_name = 'api'
+# namespace
+app_name = "api"
 
 urlpatterns = [
-    path('catalogs/', views.catalogs,
-         name='catalogs'),
-    path('experiences/', views.list_experiences,
-         name='experiences'),
-    path('experiences/<str:id>/', views.experience,
-         name='experience'),
+    path("catalogs/", XISAvailableCatalogs.as_view(), name="catalogs"),
+    path('catalogs/<str:provider_id>', XISCatalog.as_view(),
+         name='catalog-experiences'),
+    path("catalogs/<str:provider_id>/<str:experience_id>",
+         XISExperience.as_view(), name="experience"),
 ]
