@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
