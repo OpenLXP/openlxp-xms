@@ -163,6 +163,7 @@ LOGGING = {
 EMAIL_BACKEND = "django_ses.SESBackend"
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 # openlxp_authentication settings openlxp_authentication documentation:
 # https://github.com/OpenLXP/openlxp-authentication#readme
