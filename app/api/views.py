@@ -84,7 +84,7 @@ class XISCatalog(APIView):
             {
                 "total": len(catalog_experiences_list),
                 "pages": len(catalog_experiences_chunks),
-                "experiences": catalog_experiences_chunks,
+                "experiences": provider_catalog_response.json(),
             },
             status=status.HTTP_200_OK,
         )
