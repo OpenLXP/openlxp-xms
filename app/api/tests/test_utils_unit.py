@@ -61,7 +61,7 @@ class TestXISUtils(TestCase):
             mocked_get.return_value = {"test": "value"}
 
             # call the function
-            response = get_catalog_experiences("test")
+            response = get_catalog_experiences("test", None, None, None)
 
             # assert the response
             self.assertEqual(response, {"test": "value"})
