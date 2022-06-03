@@ -68,11 +68,9 @@ class XISViewsTests(TestSetUp):
         self.assertEqual(
             response.data,
             {
-                "total": 2,
-                "pages": 1,
                 "experiences": [
-                    "experience_1",
-                    "experience_2",
+                        "experience_1",
+                        "experience_2",
                 ],
             },
         )

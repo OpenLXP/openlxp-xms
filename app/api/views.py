@@ -60,8 +60,13 @@ class XISCatalog(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        page = request.GET.get('page')
+        search = request.GET.get('search')
+        page_size = request.GET.get('page_size')
+
         # get the experiences data for the catalog provided
-        provider_catalog_response = get_catalog_experiences(provider_id)
+        provider_catalog_response = \
+            get_catalog_experiences(provider_id, page, search, page_size)
 
         # check if the request was successful (GET)
         if provider_catalog_response.status_code != 200:
@@ -74,17 +79,9 @@ class XISCatalog(APIView):
         # grab the experiences json
         catalog_experiences_list = provider_catalog_response.json()
 
-        # chunk the experiences list into groups of 10
-        catalog_experiences_chunks = [
-            catalog_experiences_list[i:i + 10]
-            for i in range(0, len(catalog_experiences_list), 10)
-        ]
-
         return Response(
             {
-                "total": len(catalog_experiences_list),
-                "pages": len(catalog_experiences_chunks),
-                "experiences": provider_catalog_response.json(),
+                "experiences": catalog_experiences_list,
             },
             status=status.HTTP_200_OK,
         )
