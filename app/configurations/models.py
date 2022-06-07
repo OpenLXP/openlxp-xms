@@ -17,7 +17,6 @@ class XMSConfigurations(models.Model):
     target_xis_host = models.CharField(
         help_text="Enter the XIS host to query data",
         max_length=200,
-        default="http://openlxp-xis:8020/api/managed-data/catalogs",
     )
 
     def get_absolute_url(self):
