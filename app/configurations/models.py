@@ -49,8 +49,13 @@ class Catalogs(models.Model):
         # change the name shown
         verbose_name = "Catalog"
 
-    name = models.CharField(unique=True, help_text="Enter the name of the catalog", max_length=255)
+    name = models.CharField(
+        unique=True, help_text="Enter the name of the catalog", max_length=255)
     image = models.ImageField(upload_to='images/')
+
+    def image_path(self):
+        """Path to image without leading slash"""
+        return str(self.image.url)[1:]
 
     def __str__(self):
         """String for representing the Model object."""
