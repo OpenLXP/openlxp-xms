@@ -2,10 +2,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.serializers import CatalogsSerializer
 from api.utils.xis_helper_functions import (get_catalog_experiences,
                                             get_xis_catalogs,
                                             get_xis_experience,
                                             post_xis_experience)
+from configurations.models import CatalogConfigurations
 
 
 class XISAvailableCatalogs(APIView):
@@ -193,3 +195,14 @@ class XISExperience(APIView):
 
         return Response(experience,
                         status=provider_experience_update_response.status_code)
+
+
+class CatalogConfigurationView(APIView):
+    """Catalog Configuration View"""
+
+    def get(self, request):
+        """Returns the XDSUI configuration fields from the model"""
+        catalogs = CatalogConfigurations.objects.all()
+        serializer = CatalogsSerializer(catalogs, many=True)
+
+        return Response(serializer.data, status.HTTP_200_OK)

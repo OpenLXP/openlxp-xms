@@ -17,7 +17,6 @@ class XMSConfigurations(models.Model):
     target_xis_host = models.CharField(
         help_text="Enter the XIS host to query data",
         max_length=200,
-        default="http://openlxp-xis:8020/api/managed-data/catalogs",
     )
 
     def get_absolute_url(self):
@@ -40,3 +39,23 @@ class XMSConfigurations(models.Model):
         if not self.pk and XMSConfigurations.objects.exists():
             raise ValidationError("XMSConfigurations model already exists")
         return super(XMSConfigurations, self).save(*args, **kwargs)
+
+
+class CatalogConfigurations(models.Model):
+    """Model for Catalogs Configuration"""
+
+    class Meta:
+        # change the name shown
+        verbose_name = "Catalog"
+
+    name = models.CharField(
+        unique=True, help_text="Enter the name of the catalog", max_length=255)
+    image = models.ImageField(upload_to='images/')
+
+    def image_path(self):
+        """Path to image without leading slash"""
+        return str(self.image.url)[1:]
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return f'{self.name}'

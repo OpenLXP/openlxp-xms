@@ -6,19 +6,6 @@ from configurations.models import XMSConfigurations
 
 @tag("unit")
 class XMSConfigurationModelTests(TestCase):
-    def test_creating_xms_default_config(self):
-        """
-        Test that the XMSConfigurations model can be created with
-        default values.
-        """
-        XMSConfigurations.objects.create()
-        # get the created object
-        xms_config = XMSConfigurations.objects.first()
-
-        self.assertEqual(
-            xms_config.target_xis_host,
-            "http://openlxp-xis:8020/api/managed-data/catalogs"
-        )
 
     def test_creating_xms_config_with_values(self):
         """

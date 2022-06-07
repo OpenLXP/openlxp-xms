@@ -167,6 +167,9 @@ CORS_ALLOW_CREDENTIALS = True
 #CSRF_COOKIE_DOMAIN = '.deloitteopenlxp.com'
 #CSRF_TRUSTED_ORIGINS = ['.deloitteopenlxp.com', ]
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
+
 # openlxp_authentication settings openlxp_authentication documentation:
 # https://github.com/OpenLXP/openlxp-authentication#readme
 # social_django documentation:
@@ -227,6 +230,7 @@ OPEN_ENDPOINTS = [
     "/api/auth/register",
     "/api/auth/logout",
     "/api/auth/validate",
+    "/api/config/catalogs/",
     "/api/catalogs/",
     "/api/catalogs/[a-zA-Z0-9]+/",
     "/api/catalogs/[a-zA-Z0-9]+/[a-zA-Z0-9]+/",
