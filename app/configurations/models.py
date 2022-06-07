@@ -41,7 +41,7 @@ class XMSConfigurations(models.Model):
         return super(XMSConfigurations, self).save(*args, **kwargs)
 
 
-class Catalogs(models.Model):
+class CatalogConfigurations(models.Model):
     """Model for Catalogs Configuration"""
 
     class Meta:

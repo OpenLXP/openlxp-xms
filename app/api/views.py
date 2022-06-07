@@ -7,7 +7,7 @@ from api.utils.xis_helper_functions import (get_catalog_experiences,
                                             get_xis_catalogs,
                                             get_xis_experience,
                                             post_xis_experience)
-from configurations.models import Catalogs
+from configurations.models import CatalogConfigurations
 
 
 class XISAvailableCatalogs(APIView):
@@ -202,7 +202,7 @@ class CatalogConfigurationView(APIView):
 
     def get(self, request):
         """Returns the XDSUI configuration fields from the model"""
-        catalogs = Catalogs.objects.all()
+        catalogs = CatalogConfigurations.objects.all()
         serializer = CatalogsSerializer(catalogs, many=True)
 
         return Response(serializer.data, status.HTTP_200_OK)

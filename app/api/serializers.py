@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from configurations.models import Catalogs
+from configurations.models import CatalogConfigurations
 
 
 # config serializers
@@ -9,6 +9,6 @@ class CatalogsSerializer(serializers.ModelSerializer):
     image = serializers.CharField(source='image_path')
 
     class Meta:
-        model = Catalogs
+        model = CatalogConfigurations
 
         fields = '__all__'

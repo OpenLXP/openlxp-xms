@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from configurations.models import Catalogs, XMSConfigurations
+from configurations.models import CatalogConfigurations, XMSConfigurations
 
 # Register your models here.
 
@@ -26,7 +26,8 @@ class XMSConfigurationsAdmin(admin.ModelAdmin):
         ),
     )
 
-@admin.register(Catalogs)
+
+@admin.register(CatalogConfigurations)
 class CatalogsAdmin(admin.ModelAdmin):
     list_display = (
         "name",
