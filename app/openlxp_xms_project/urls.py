@@ -25,4 +25,4 @@ urlpatterns = [
     path('api/', include('api.urls')),
     path("api/", include("users.urls")),
     url("", include("openlxp_authentication.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
