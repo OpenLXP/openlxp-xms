@@ -230,6 +230,7 @@ OPEN_ENDPOINTS = [
     "/api/auth/register",
     "/api/auth/logout",
     "/api/auth/validate",
+    "/api/config/catalogs/",
     "/api/catalogs/",
     "/api/catalogs/[a-zA-Z0-9]+/",
     "/api/catalogs/[a-zA-Z0-9]+/[a-zA-Z0-9]+/",
