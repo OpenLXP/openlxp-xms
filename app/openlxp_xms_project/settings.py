@@ -231,4 +231,5 @@ OPEN_ENDPOINTS = [
     "/api/auth/logout",
     "/api/auth/validate",
     "/api/config/catalogs/",
+    "/api/catalogs/",
 ]
