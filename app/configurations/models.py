@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.forms import ValidationError
 from django.urls import reverse
@@ -50,10 +51,14 @@ class CatalogConfigurations(models.Model):
 
     name = models.CharField(
         unique=True, help_text="Enter the name of the catalog", max_length=255)
-    image = models.ImageField(upload_to='images/')
+    image = models.ImageField(upload_to='images/', blank=True)
+    members = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, 'catalogs', blank=True)
 
     def image_path(self):
         """Path to image without leading slash"""
+        if not self.image:
+            return None
         return str(self.image.url)[1:]
 
     def __str__(self):

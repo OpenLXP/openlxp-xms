@@ -1,8 +1,9 @@
+import json
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.serializers import CatalogsSerializer
 from api.utils.xis_helper_functions import (get_catalog_experiences,
                                             get_xis_catalogs,
                                             get_xis_experience,
@@ -26,6 +27,10 @@ class XISAvailableCatalogs(APIView):
                 {"detail": "There was an error processing your request."},
                 status=xis_catalogs_response.status_code,
             )
+
+        for catalog in json.loads(xis_catalogs_response.json()):
+            if not CatalogConfigurations.objects.filter(name=catalog).exists():
+                CatalogConfigurations(name=catalog).save()
 
         # return the response
         return Response(xis_catalogs_response.json(), status.HTTP_200_OK)
@@ -60,6 +65,16 @@ class XISCatalog(APIView):
                               "catalogs"
                 },
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # validate the user should be able to view the catalog
+        if not request.user.is_authenticated or not\
+                request.user.catalogs.filter(name=provider_id).exists():
+            return Response(
+                {
+                    "detail": "Missing user credentials or catalog access"
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
             )
 
         page = request.GET.get('page')
@@ -120,6 +135,16 @@ class XISExperience(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        # validate the user should be able to view the catalog
+        if not request.user.is_authenticated or not\
+                request.user.catalogs.filter(name=provider_id).exists():
+            return Response(
+                {
+                    "detail": "Missing user credentials or catalog access"
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         provider_experience_response = get_xis_experience(
             provider_id=provider_id, experience_id=experience_id
         )
@@ -165,6 +190,16 @@ class XISExperience(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        # validate the user should be able to view the catalog
+        if not request.user.is_authenticated or not\
+                request.user.catalogs.filter(name=provider_id).exists():
+            return Response(
+                {
+                    "detail": "Missing user credentials or catalog access"
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
         provider_experience_response = get_xis_experience(
             provider_id=provider_id, experience_id=experience_id
         )
@@ -195,14 +230,3 @@ class XISExperience(APIView):
 
         return Response(experience,
                         status=provider_experience_update_response.status_code)
-
-
-class CatalogConfigurationView(APIView):
-    """Catalog Configuration View"""
-
-    def get(self, request):
-        """Returns the XDSUI configuration fields from the model"""
-        catalogs = CatalogConfigurations.objects.all()
-        serializer = CatalogsSerializer(catalogs, many=True)
-
-        return Response(serializer.data, status.HTTP_200_OK)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from configurations.models import CatalogConfigurations
+from .models import CatalogConfigurations
 
 
 # config serializers
@@ -11,4 +11,4 @@ class CatalogsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CatalogConfigurations
 
-        fields = '__all__'
+        exclude = ['members', ]

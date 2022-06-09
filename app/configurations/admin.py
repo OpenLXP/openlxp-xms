@@ -44,4 +44,13 @@ class CatalogsAdmin(admin.ModelAdmin):
                 )
             },
         ),
+        (
+            "Members",
+            {
+                "fields": (
+                    "members",
+                )
+            }
+        ),
     )
+    filter_horizontal = ("members",)
