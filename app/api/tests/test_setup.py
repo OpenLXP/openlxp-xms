@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from rest_framework.test import APITestCase
 
@@ -20,6 +20,13 @@ class TestSetUp(APITestCase):
             first_name="super",
             last_name="user",
         )
+
+        mock = Mock()
+        mock.exists.return_value = True
+
+        self.user_catalogs = patch("users.models.UserProfile.catalogs")
+        self.user_catalogs_mock = self.user_catalogs.start()
+        self.user_catalogs_mock.filter.return_value = mock
 
         self.mocked_get_xis_catalogs = patch(
             "api.views.get_xis_catalogs"

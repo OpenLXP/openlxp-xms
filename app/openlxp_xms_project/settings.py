@@ -175,7 +175,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 # social_django documentation:
 # https://python-social-auth.readthedocs.io/en/latest/index.html
 
-SOCIAL_AUTH_STRATEGY = "openlxp_authentication.models.SAMLDBStrategy"
+# SOCIAL_AUTH_STRATEGY = "openlxp_authentication.models.SAMLDBStrategy"
 JSONFIELD_ENABLED = True
 USER_MODEL = "users.UserProfile"
 SESSION_EXPIRATION = True
@@ -232,6 +232,4 @@ OPEN_ENDPOINTS = [
     "/api/auth/validate",
     "/api/config/catalogs/",
     "/api/catalogs/",
-    "/api/catalogs/[a-zA-Z0-9]+/",
-    "/api/catalogs/[a-zA-Z0-9]+/[a-zA-Z0-9]+/",
 ]
