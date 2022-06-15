@@ -1,3 +1,4 @@
+import json
 from unittest.mock import patch
 
 from ddt import ddt
@@ -18,10 +19,10 @@ class XISViewsTests(TestSetUp):
 
         # mock the response from the get_xis_catalogs function
         with patch("api.views.get_xis_catalogs") as mocked_get:
-            mocked_get.return_value.json.return_value = [
+            mocked_get.return_value.json.return_value = json.dumps([
                 "catalog_1",
                 "catalog_2",
-            ]
+            ])
             mocked_get.return_value.status_code = 200
 
             # call the function
@@ -29,7 +30,7 @@ class XISViewsTests(TestSetUp):
 
             # assert the response
             self.assertEqual(
-                response.data, ["catalog_1", "catalog_2"],
+                json.loads(response.data), ["catalog_1", "catalog_2"],
             )
 
     def test_xis_get_catalogs_view_error(self):
@@ -68,13 +69,9 @@ class XISViewsTests(TestSetUp):
         self.assertEqual(
             response.data,
             {
-                "total": 2,
-                "pages": 1,
                 "experiences": [
-                    [
                         "experience_1",
                         "experience_2",
-                    ]
                 ],
             },
         )

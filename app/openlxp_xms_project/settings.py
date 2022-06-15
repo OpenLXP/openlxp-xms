@@ -163,13 +163,19 @@ LOGGING = {
 EMAIL_BACKEND = "django_ses.SESBackend"
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+#CSRF_COOKIE_DOMAIN = '.deloitteopenlxp.com'
+#CSRF_TRUSTED_ORIGINS = ['.deloitteopenlxp.com', ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 
 # openlxp_authentication settings openlxp_authentication documentation:
 # https://github.com/OpenLXP/openlxp-authentication#readme
 # social_django documentation:
 # https://python-social-auth.readthedocs.io/en/latest/index.html
 
-SOCIAL_AUTH_STRATEGY = "openlxp_authentication.models.SAMLDBStrategy"
+# SOCIAL_AUTH_STRATEGY = "openlxp_authentication.models.SAMLDBStrategy"
 JSONFIELD_ENABLED = True
 USER_MODEL = "users.UserProfile"
 SESSION_EXPIRATION = True
@@ -224,7 +230,6 @@ OPEN_ENDPOINTS = [
     "/api/auth/register",
     "/api/auth/logout",
     "/api/auth/validate",
+    "/api/config/catalogs/",
     "/api/catalogs/",
-    "/api/catalogs/[a-zA-Z0-9]+/",
-    "/api/catalogs/[a-zA-Z0-9]+/[a-zA-Z0-9]+/",
 ]

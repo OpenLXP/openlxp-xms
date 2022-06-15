@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
@@ -18,7 +16,7 @@ class LoginView(GenericAPIView):
         session id cookie on success
         """
         # read login info
-        data = json.loads(request.body)
+        data = request.data
         username = data.get("username")
         password = data.get("password")
 
@@ -47,6 +45,7 @@ class LoginView(GenericAPIView):
 
 class LogoutView(GenericAPIView):
     """Logs user out and ends session"""
+    serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
         """
@@ -66,12 +65,12 @@ class RegisterView(GenericAPIView):
         POST request that takes in: email, password, first_name, and last_name
         """
         # grab the data before its serialized
-        data = json.loads(request.body)
+        data = request.data
         username = data.get('email')
         password = data.get('password')
 
         # create the user in the db
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
@@ -95,7 +94,7 @@ class IsLoggedInView(GenericAPIView):
 
     def get(self, request):
         """
-        Validates that a user has a valid sessionid
+        Validates that a user has a valid session id
         """
         # if the user is not found/authenticated (invalid session id)
         if not request.user.is_authenticated:

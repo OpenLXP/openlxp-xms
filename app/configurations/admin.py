@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from configurations.models import XMSConfigurations
+from configurations.models import CatalogConfigurations, XMSConfigurations
 
 # Register your models here.
 
@@ -25,3 +25,32 @@ class XMSConfigurationsAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+
+@admin.register(CatalogConfigurations)
+class CatalogsAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+    )
+    # fields to display in the admin site
+    fieldsets = (
+        (
+            "Catalog Configuration",
+            {
+                # on the same line
+                "fields": (
+                    "name",
+                    "image",
+                )
+            },
+        ),
+        (
+            "Members",
+            {
+                "fields": (
+                    "members",
+                )
+            }
+        ),
+    )
+    filter_horizontal = ("members",)

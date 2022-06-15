@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -6,6 +8,7 @@ from api.utils.xis_helper_functions import (get_catalog_experiences,
                                             get_xis_catalogs,
                                             get_xis_experience,
                                             post_xis_experience)
+from configurations.models import CatalogConfigurations
 
 
 class XISAvailableCatalogs(APIView):
@@ -24,6 +27,10 @@ class XISAvailableCatalogs(APIView):
                 {"detail": "There was an error processing your request."},
                 status=xis_catalogs_response.status_code,
             )
+
+        for catalog in json.loads(xis_catalogs_response.json()):
+            if not CatalogConfigurations.objects.filter(name=catalog).exists():
+                CatalogConfigurations(name=catalog).save()
 
         # return the response
         return Response(xis_catalogs_response.json(), status.HTTP_200_OK)
@@ -60,8 +67,23 @@ class XISCatalog(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        # validate the user should be able to view the catalog
+        if not request.user.is_authenticated or not\
+                request.user.catalogs.filter(name=provider_id).exists():
+            return Response(
+                {
+                    "detail": "Missing user credentials or catalog access"
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        page = request.GET.get('page')
+        search = request.GET.get('search')
+        page_size = request.GET.get('page_size')
+
         # get the experiences data for the catalog provided
-        provider_catalog_response = get_catalog_experiences(provider_id)
+        provider_catalog_response = \
+            get_catalog_experiences(provider_id, page, search, page_size)
 
         # check if the request was successful (GET)
         if provider_catalog_response.status_code != 200:
@@ -74,17 +96,9 @@ class XISCatalog(APIView):
         # grab the experiences json
         catalog_experiences_list = provider_catalog_response.json()
 
-        # chunk the experiences list into groups of 10
-        catalog_experiences_chunks = [
-            catalog_experiences_list[i:i + 10]
-            for i in range(0, len(catalog_experiences_list), 10)
-        ]
-
         return Response(
             {
-                "total": len(catalog_experiences_list),
-                "pages": len(catalog_experiences_chunks),
-                "experiences": catalog_experiences_chunks,
+                "experiences": catalog_experiences_list,
             },
             status=status.HTTP_200_OK,
         )
@@ -119,6 +133,16 @@ class XISExperience(APIView):
                               "catalogs"
                 },
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # validate the user should be able to view the catalog
+        if not request.user.is_authenticated or not\
+                request.user.catalogs.filter(name=provider_id).exists():
+            return Response(
+                {
+                    "detail": "Missing user credentials or catalog access"
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
             )
 
         provider_experience_response = get_xis_experience(
@@ -164,6 +188,16 @@ class XISExperience(APIView):
                               "catalogs"
                 },
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # validate the user should be able to view the catalog
+        if not request.user.is_authenticated or not\
+                request.user.catalogs.filter(name=provider_id).exists():
+            return Response(
+                {
+                    "detail": "Missing user credentials or catalog access"
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
             )
 
         provider_experience_response = get_xis_experience(

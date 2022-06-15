@@ -89,12 +89,13 @@ def post_xis_experience(data, provider_id, experience_id):
 
 
 # helper function to get all experiences from a catalog in XIS
-def get_catalog_experiences(provider_id):
+def get_catalog_experiences(provider_id, page, search, page_size):
     """Get all the experiences for a given catalog
 
     Args:
         provider_id (string): the query parameter for the catalog
-
+        search (string): the query parameter for the search
+        page (int): the query parameter for the page number
     Returns:
         requests.Response: [dictionary]
     """
@@ -104,4 +105,6 @@ def get_catalog_experiences(provider_id):
     xis_metadata_url = xis_metadata_url + f"/{provider_id}"
 
     # request the experiences from the specified catalog
-    return requests.get(xis_metadata_url)
+    return requests.get(xis_metadata_url, params={'page': page,
+                                                  'search': search,
+                                                  'page_size': page_size})
