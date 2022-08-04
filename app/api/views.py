@@ -209,7 +209,8 @@ class XISExperience(APIView):
         if provider_experience_response.status_code != 200:
             # return the error message
             return Response(
-                {"detail": "The experience does not exist in the XIS catalogs"},
+                {"detail": "The experience does not exist in the XIS "
+                 "catalogs"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
