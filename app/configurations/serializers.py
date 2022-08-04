@@ -11,4 +11,4 @@ class CatalogsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CatalogConfigurations
 
-        exclude = ['members', ]
+        fields = ['name', 'image', ]
