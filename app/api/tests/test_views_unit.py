@@ -93,7 +93,7 @@ class XISViewsTests(TestSetUp):
         # assert the response  returns a 500
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
 
     def test_xis_get_catalog_experiences_view_error_provider_not_found(self):
@@ -132,7 +132,7 @@ class XISViewsTests(TestSetUp):
         # assert the response  returns a 500
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
 
     def test_xis_get_experience_view(self):
@@ -176,7 +176,7 @@ class XISViewsTests(TestSetUp):
         # assert the response
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
 
     def test_xis_get_experience_error_provider_not_found(self):
@@ -225,7 +225,7 @@ class XISViewsTests(TestSetUp):
         # assert the response
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
 
     def test_xis_post_experience_view(self):
@@ -271,7 +271,7 @@ class XISViewsTests(TestSetUp):
         # assert the response
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
 
     def test_xis_post_experience_error_provider_not_found(self):
@@ -348,5 +348,5 @@ class XISViewsTests(TestSetUp):
         # assert the response
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
