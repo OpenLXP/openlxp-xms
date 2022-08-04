@@ -10,6 +10,10 @@ from api.utils.xis_helper_functions import (get_catalog_experiences,
                                             post_xis_experience)
 from configurations.models import CatalogConfigurations
 
+generic_error = "There was an error processing your request."
+bad_user = "Missing user credentials or catalog access"
+wrong_provider = "The provider id does not exist in the XIS catalogs"
+
 
 class XISAvailableCatalogs(APIView):
     """Catalog List View"""
@@ -24,7 +28,7 @@ class XISAvailableCatalogs(APIView):
         if xis_catalogs_response.status_code != 200:
             # return the error message
             return Response(
-                {"detail": "There was an error processing your request."},
+                {"detail": generic_error},
                 status=xis_catalogs_response.status_code,
             )
 
@@ -53,7 +57,7 @@ class XISCatalog(APIView):
         if xis_catalogs_response.status_code != 200:
             # return the error message
             return Response(
-                {"detail": "There was an error processing your request"},
+                {"detail": generic_error},
                 status=xis_catalogs_response.status_code,
             )
 
@@ -61,8 +65,7 @@ class XISCatalog(APIView):
         if provider_id not in xis_catalogs_response.json():
             return Response(
                 {
-                    "detail": "The provider id does not exist in the XIS "
-                              "catalogs"
+                    "detail": wrong_provider
                 },
                 status=status.HTTP_404_NOT_FOUND,
             )
@@ -72,7 +75,7 @@ class XISCatalog(APIView):
                 request.user.catalogs.filter(name=provider_id).exists():
             return Response(
                 {
-                    "detail": "Missing user credentials or catalog access"
+                    "detail": bad_user
                 },
                 status=status.HTTP_401_UNAUTHORIZED,
             )
@@ -89,7 +92,7 @@ class XISCatalog(APIView):
         if provider_catalog_response.status_code != 200:
             # return the error message
             return Response(
-                {"detail": "There was an error processing your request"},
+                {"detail": generic_error},
                 status=provider_catalog_response.status_code,
             )
 
@@ -121,7 +124,7 @@ class XISExperience(APIView):
         if xis_catalogs_response.status_code != 200:
             # return the error message
             return Response(
-                {"detail": "There was an error processing your request"},
+                {"detail": generic_error},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -129,8 +132,7 @@ class XISExperience(APIView):
         if provider_id not in xis_catalogs_response.json():
             return Response(
                 {
-                    "detail": "The provider id does not exist in the XIS "
-                              "catalogs"
+                    "detail": wrong_provider
                 },
                 status=status.HTTP_404_NOT_FOUND,
             )
@@ -140,7 +142,7 @@ class XISExperience(APIView):
                 request.user.catalogs.filter(name=provider_id).exists():
             return Response(
                 {
-                    "detail": "Missing user credentials or catalog access"
+                    "detail": bad_user
                 },
                 status=status.HTTP_401_UNAUTHORIZED,
             )
@@ -153,7 +155,7 @@ class XISExperience(APIView):
         if provider_experience_response.status_code != 200:
             # return the error message
             return Response(
-                {"detail": "There was an error processing your request"},
+                {"detail": generic_error},
                 status=provider_experience_response.status_code,
             )
 
@@ -176,7 +178,7 @@ class XISExperience(APIView):
         if xis_catalogs_response.status_code != 200:
             # return the error message
             return Response(
-                {"detail": "There was an error processing your request"},
+                {"detail": generic_error},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -184,8 +186,7 @@ class XISExperience(APIView):
         if provider_id not in xis_catalogs_response.json():
             return Response(
                 {
-                    "detail": "The provider id does not exist in the XIS "
-                              "catalogs"
+                    "detail": wrong_provider
                 },
                 status=status.HTTP_404_NOT_FOUND,
             )
@@ -195,7 +196,7 @@ class XISExperience(APIView):
                 request.user.catalogs.filter(name=provider_id).exists():
             return Response(
                 {
-                    "detail": "Missing user credentials or catalog access"
+                    "detail": bad_user
                 },
                 status=status.HTTP_401_UNAUTHORIZED,
             )
@@ -208,8 +209,7 @@ class XISExperience(APIView):
         if provider_experience_response.status_code != 200:
             # return the error message
             return Response(
-                {"detail": "The experience does not exist in the XIS "
-                           "catalogs"},
+                {"detail": "The experience does not exist in the XIS catalogs"},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
@@ -221,7 +221,7 @@ class XISExperience(APIView):
         if provider_experience_update_response.status_code != 201:
             # return the error message
             return Response(
-                {"detail": "There was an error processing your request"},
+                {"detail": generic_error},
                 status=provider_experience_update_response.status_code,
             )
 
