@@ -100,29 +100,31 @@ class CourseInformationMapping(TimeStampedModel):
     """ Model to map course information"""
 
     course_title = models.CharField(max_length=200,
-                                    default="Course.CourseTitle",
+                                    default="metadata.Course.CourseTitle",
                                     help_text="Enter the mapping for the "
                                               "title of the course found in "
                                               "the elasticsearch")
 
     course_short_description = models.CharField(max_length=200,
-                                                default="Course."
+                                                default="metadata.Course."
                                                 "CourseShortDescription",
-                                                help_text="Enter the mapping for the"
+                                                help_text="Enter the mapping "
+                                                "for the"
                                                 " short description of"
                                                 " the course found in the"
                                                 " elasticsearch")
 
     course_full_description = models.CharField(max_length=200,
-                                               default="Course."
+                                               default="metadata.Course."
                                                "CourseFullDescription",
-                                               help_text="Enter the mapping for the"
+                                               help_text="Enter the mapping "
+                                               "for the"
                                                " full description of"
                                                " the course found in the"
                                                " elasticsearch")
 
     course_code = models.CharField(max_length=200,
-                                   default="Course.CourseCode",
+                                   default="metadata.Course.CourseCode",
                                    help_text="Enter the mapping for the "
                                              "code of the course "
                                              "found in the elasticsearch")
@@ -134,6 +136,14 @@ class CourseInformationMapping(TimeStampedModel):
     def __str__(self):
         """String for representing the Model object."""
         return f'{self.id}'
+
+    def list_fields(self):
+        """list of fields to use"""
+        return [
+            self.course_title, self.course_code,
+            self.course_short_description,
+            self.course_full_description
+        ]
 
     def save(self, *args, **kwargs):
         num_active_mappings = CourseInformationMapping.objects.filter().count()

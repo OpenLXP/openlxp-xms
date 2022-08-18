@@ -2,7 +2,7 @@ import json
 
 import requests
 
-from configurations.models import XMSConfigurations
+from configurations.models import CourseInformationMapping, XMSConfigurations
 
 
 # helper function to get the catalogs from XIS
@@ -45,8 +45,8 @@ def get_xis_experience(provider_id, experience_id):
 
     # construct the url for the experience
     xis_metadata_experience_url = (
-            xis_metadata_experience_url
-            + f"/{provider_id}/{experience_id}"
+        xis_metadata_experience_url
+        + f"/{provider_id}/{experience_id}"
     )
 
     return requests.get(xis_metadata_experience_url)
@@ -75,8 +75,8 @@ def post_xis_experience(data, provider_id, experience_id):
 
     # construct the url for the experience
     xis_metadata_experience_url = (
-            xis_metadata_experience_url
-            + f"/{provider_id}/{experience_id}"
+        xis_metadata_experience_url
+        + f"/{provider_id}/{experience_id}"
     )
 
     # formatting the request data to JSON
@@ -103,8 +103,11 @@ def get_catalog_experiences(provider_id, page, search, page_size):
         XMSConfigurations.objects.first().target_xis_host
     )
     xis_metadata_url = xis_metadata_url + f"/{provider_id}"
+    search_fields = CourseInformationMapping.objects.first().list_fields()
 
     # request the experiences from the specified catalog
     return requests.get(xis_metadata_url, params={'page': page,
                                                   'search': search,
-                                                  'page_size': page_size})
+                                                  'page_size': page_size,
+                                                  'fields':
+                                                  ','.join(search_fields)})
