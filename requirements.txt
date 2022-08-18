@@ -30,6 +30,8 @@ django-ses>=2.0.0 , <2.1.0
 
 django-cors-headers>=3.7.0, <3.8.0
 
+django-model-utils>=4.1.1,<4.2.0
+
 ddt>=1.4.2, <1.5.0
 
 requests>=2.25.1, <2.26.0
