@@ -19,25 +19,22 @@ class XISAvailableCatalogs(APIView):
     """Catalog List View"""
 
     def get(self, request) -> Response:
-        """Returns the list of catalogs found in the XIS"""
+        """Returns the list of catalogs found in the current user"""
 
         # get the url for the XIS catalogs
         xis_catalogs_response = get_xis_catalogs()
 
         # check if the request was successful
-        if xis_catalogs_response.status_code != 200:
-            # return the error message
-            return Response(
-                {"detail": generic_error},
-                status=xis_catalogs_response.status_code,
-            )
-
-        for catalog in json.loads(xis_catalogs_response.json()):
-            if not CatalogConfigurations.objects.filter(name=catalog).exists():
-                CatalogConfigurations(name=catalog).save()
+        if xis_catalogs_response.status_code == 200:
+            for catalog in json.loads(xis_catalogs_response.json()):
+                if not CatalogConfigurations.objects.filter(name=catalog)\
+                        .exists():
+                    CatalogConfigurations(name=catalog).save()
 
         # return the response
-        return Response(xis_catalogs_response.json(), status.HTTP_200_OK)
+        return Response(json.dumps([str(catalog) for catalog in
+                                    request.user.catalogs.all()]),
+                        status.HTTP_200_OK)
 
 
 class XISCatalog(APIView):
