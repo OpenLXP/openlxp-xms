@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from configurations.models import CatalogConfigurations, XMSConfigurations
+from configurations.models import (CatalogConfigurations,
+                                   CourseInformationMapping, XMSConfigurations)
 
 # Register your models here.
 
@@ -10,7 +11,7 @@ class XMSConfigurationsAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "target_xis_host",
-        # "target_xis_catalogs_host",
+        "default_user_group",
     )
     # fields to display in the admin site
     fieldsets = (
@@ -21,6 +22,14 @@ class XMSConfigurationsAdmin(admin.ModelAdmin):
                 "fields": (
                     "target_xis_host",
                     # "target_xis_catalogs_host",
+                )
+            },
+        ),
+        (
+            "XMS Configuration",
+            {
+                "fields": (
+                    "default_user_group",
                 )
             },
         ),
@@ -54,3 +63,35 @@ class CatalogsAdmin(admin.ModelAdmin):
         ),
     )
     filter_horizontal = ("members",)
+
+
+@admin.register(CourseInformationMapping)
+class CourseInformationMappingAdmin(admin.ModelAdmin):
+    list_display = (
+        "course_title",
+        "course_code",
+        "course_short_description",
+        "course_full_description",
+    )
+    # fields to display in the admin site
+    fieldsets = (
+        (
+            "Display Fields",
+            {
+                # on the same line
+                "fields": (
+                    "course_title",
+                    "course_code",
+                )
+            },
+        ),
+        (
+            "Search Fields",
+            {
+                "fields": (
+                    "course_short_description",
+                    "course_full_description",
+                )
+            },
+        ),
+    )

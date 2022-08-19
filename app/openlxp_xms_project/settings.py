@@ -232,4 +232,5 @@ OPEN_ENDPOINTS = [
     "/api/auth/validate",
     "/api/config/catalogs/",
     "/api/catalogs/",
+    "/api/config/info-mapping/",
 ]
