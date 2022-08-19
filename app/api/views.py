@@ -27,11 +27,14 @@ class XISAvailableCatalogs(APIView):
         # check if the request was successful
         if xis_catalogs_response.status_code == 200:
             for catalog in json.loads(xis_catalogs_response.json()):
-                if not CatalogConfigurations.objects.filter(name=catalog).exists():
+                if not CatalogConfigurations.objects.filter(name=catalog)\
+                        .exists():
                     CatalogConfigurations(name=catalog).save()
 
         # return the response
-        return Response(json.dumps([str(catalog) for catalog in request.user.catalogs.all()]), status.HTTP_200_OK)
+        return Response(json.dumps([str(catalog) for catalog in
+                                    request.user.catalogs.all()]),
+                        status.HTTP_200_OK)
 
 
 class XISCatalog(APIView):

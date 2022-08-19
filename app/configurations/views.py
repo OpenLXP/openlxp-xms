@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import CatalogConfigurations, CourseInformationMapping
+from .models import CourseInformationMapping
 from .serializers import CatalogsSerializer, CourseInformationMappingSerializer
 
 
