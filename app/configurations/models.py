@@ -103,7 +103,7 @@ class CourseInformationMapping(TimeStampedModel):
                                     default="metadata.Course.CourseTitle",
                                     help_text="Enter the mapping for the "
                                               "title of the course found in "
-                                              "the elasticsearch")
+                                              "XIS")
 
     course_short_description = models.CharField(max_length=200,
                                                 default="metadata.Course."
@@ -111,8 +111,7 @@ class CourseInformationMapping(TimeStampedModel):
                                                 help_text="Enter the mapping "
                                                 "for the"
                                                 " short description of"
-                                                " the course found in the"
-                                                " elasticsearch")
+                                                " the course found in XIS")
 
     course_full_description = models.CharField(max_length=200,
                                                default="metadata.Course."
@@ -120,14 +119,13 @@ class CourseInformationMapping(TimeStampedModel):
                                                help_text="Enter the mapping "
                                                "for the"
                                                " full description of"
-                                               " the course found in the"
-                                               " elasticsearch")
+                                               " the course found in XIS")
 
     course_code = models.CharField(max_length=200,
                                    default="metadata.Course.CourseCode",
                                    help_text="Enter the mapping for the "
                                              "code of the course "
-                                             "found in the elasticsearch")
+                                             "found in XIS")
 
     def get_absolute_url(self):
         """ URL for displaying individual model records."""
