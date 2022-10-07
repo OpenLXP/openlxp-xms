@@ -1,5 +1,5 @@
 import json
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from ddt import ddt
 from django.test import tag
@@ -19,11 +19,16 @@ class XISViewsTests(TestSetUp):
 
         # mock the response from the get_xis_catalogs function
         with patch("api.views.get_xis_catalogs") as mocked_get:
-            mocked_get.return_value.json.return_value = json.dumps([
-                "catalog_1",
-                "catalog_2",
-            ])
-            mocked_get.return_value.status_code = 200
+            # mocked_get.return_value.json.return_value = json.dumps([
+            #     "catalog_1",
+            #     "catalog_2",
+            # ])
+            self.super_user.catalogs = Mock()
+            self.user_catalogs_mock.all.return_value = [
+                "catalog_1", "catalog_2"]
+            mocked_get.return_value.status_code = 400
+
+            self.client.force_login(self.super_user)
 
             # call the function
             response = self.client.get(reverse("api:catalogs"))
@@ -35,7 +40,7 @@ class XISViewsTests(TestSetUp):
 
     def test_xis_get_catalogs_view_error(self):
         """
-        Tests the catalog api returns a error when the status code is not 200
+        Tests the catalog api returns a error when no user
         """
         with patch("api.views.get_xis_catalogs") as mocked_get:
             mocked_get.return_value.status_code = 500
@@ -44,11 +49,7 @@ class XISViewsTests(TestSetUp):
 
             # assert the response
             self.assertEqual(
-                response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-            self.assertEqual(
-                response.data["detail"],
-                "There was an error processing your request.",
+                response.status_code, status.HTTP_403_FORBIDDEN
             )
 
     def test_xis_get_catalog_experiences_view(self):
@@ -70,8 +71,8 @@ class XISViewsTests(TestSetUp):
             response.data,
             {
                 "experiences": [
-                        "experience_1",
-                        "experience_2",
+                    "experience_1",
+                    "experience_2",
                 ],
             },
         )
@@ -93,7 +94,7 @@ class XISViewsTests(TestSetUp):
         # assert the response  returns a 500
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
 
     def test_xis_get_catalog_experiences_view_error_provider_not_found(self):
@@ -132,7 +133,7 @@ class XISViewsTests(TestSetUp):
         # assert the response  returns a 500
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
 
     def test_xis_get_experience_view(self):
@@ -176,7 +177,7 @@ class XISViewsTests(TestSetUp):
         # assert the response
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
 
     def test_xis_get_experience_error_provider_not_found(self):
@@ -225,7 +226,7 @@ class XISViewsTests(TestSetUp):
         # assert the response
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
 
     def test_xis_post_experience_view(self):
@@ -271,7 +272,7 @@ class XISViewsTests(TestSetUp):
         # assert the response
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )
 
     def test_xis_post_experience_error_provider_not_found(self):
@@ -348,5 +349,5 @@ class XISViewsTests(TestSetUp):
         # assert the response
         self.assertEqual(
             response.data["detail"],
-            "There was an error processing your request",
+            "There was an error processing your request.",
         )

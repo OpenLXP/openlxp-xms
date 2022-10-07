@@ -57,8 +57,11 @@ class TestXISUtils(TestCase):
         """
 
         # mock the response from the XIS experiences
-        with patch("requests.get") as mocked_get:
+        with patch("requests.get") as mocked_get,\
+                patch("api.utils.xis_helper_functions."
+                      "CourseInformationMapping.objects") as cim:
             mocked_get.return_value = {"test": "value"}
+            cim.list_fields.return_value = ['abc']
 
             # call the function
             response = get_catalog_experiences("test", None, None, None)
