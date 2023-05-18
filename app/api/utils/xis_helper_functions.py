@@ -115,10 +115,11 @@ def get_catalog_experiences(provider_id, page, search, page_size):
 
 
 class TokenAuth(AuthBase):
-    """Attaches HTTP Authentication Header to the given Request object."""
+    """Attaches HTTP Authorization Header to the given Request object."""
 
-    def __call__(self, r):
+    def __call__(self, r, token_name='token'):
         # modify and return the request
-        r.headers['Authenticate'] = "Token " + \
+
+        r.headers['Authorization'] = token_name + ' ' + \
             XMSConfigurations.objects.first().xis_api_key
         return r
