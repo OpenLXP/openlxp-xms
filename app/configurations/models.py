@@ -32,6 +32,10 @@ class XMSConfigurations(models.Model):
         blank=True,
         null=True
     )
+    xis_api_key = models.CharField(
+        help_text="Enter the XIS API Key",
+        max_length=128
+    )
 
     def get_absolute_url(self):
         """
