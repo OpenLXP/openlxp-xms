@@ -35,6 +35,8 @@ AUTH_USER_MODEL = "users.UserProfile"
 # Application definition
 
 INSTALLED_APPS = [
+    "admin_interface",
+    "colorfield",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -231,3 +233,5 @@ OPEN_ENDPOINTS = [
     "/api/auth/logout",
     "/api/auth/validate",
 ]
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
