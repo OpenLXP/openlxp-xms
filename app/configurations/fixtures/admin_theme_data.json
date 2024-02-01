@@ -17,7 +17,7 @@
             "env_name": "",
             "env_color": "#077391",
             "env_visible_in_header": true,
-            "env_visible_in_favicon": true,
+            "env_visible_in_favicon": false,
             "language_chooser_active": true,
             "language_chooser_control": "default-select",
             "language_chooser_display": "name",
@@ -62,4 +62,4 @@
             "form_pagination_sticky": false
         }
     }
-]
+    ]
