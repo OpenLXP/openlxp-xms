@@ -2,6 +2,7 @@ version: "3"
 
 services:
   db:
+    platform: linux/x86_64
     image: mysql:5.7
     ports:
       - '3306:3306'
@@ -34,8 +35,6 @@ services:
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
       AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
       AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
-      REQUESTS_CA_BUNDLE: '/etc/ssl/certs/ca-certificates.pem'
-      AWS_CA_BUNDLE: '/etc/ssl/certs/ca-certificates.pem'
       SECRET_KEY_VAL: "${SECRET_KEY_VAL}"
       LOG_PATH: "${LOG_PATH}"
       ENTITY_ID: "${ENTITY_ID}"
@@ -43,7 +42,6 @@ services:
       SP_PRIVATE_KEY: "${SP_PRIVATE_KEY}"
     volumes:
       - ./app:/opt/app/openlxp-xms
-      - ${CERT_VOLUME}:/etc/ssl/certs/ca-certificates.pem
 
     depends_on:
       - db
