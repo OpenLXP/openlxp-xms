@@ -216,7 +216,7 @@ class XISExperience(APIView):
                                 experience_id=experience_id)
 
         # check if the request was successful
-        if provider_experience_update_response.status_code != 201:
+        if provider_experience_update_response.status_code // 10 != 20:
             # return the error message
             return Response(
                 {"detail": generic_error},

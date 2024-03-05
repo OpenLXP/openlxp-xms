@@ -21,7 +21,7 @@ class XMSConfigurationsAdmin(admin.ModelAdmin):
                 # on the same line
                 "fields": (
                     "target_xis_host",
-                    # "target_xis_catalogs_host",
+                    "xis_api_key",
                 )
             },
         ),

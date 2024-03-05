@@ -1,6 +1,7 @@
 import json
 
 import requests
+from requests.auth import AuthBase
 
 from configurations.models import CourseInformationMapping, XMSConfigurations
 
@@ -85,7 +86,7 @@ def post_xis_experience(data, provider_id, experience_id):
     headers = {'content-type': 'application/json'}
 
     return requests.post(xis_metadata_experience_url, data=dataJSON,
-                         timeout=30, headers=headers)
+                         timeout=30, headers=headers, auth=TokenAuth())
 
 
 # helper function to get all experiences from a catalog in XIS
@@ -111,3 +112,14 @@ def get_catalog_experiences(provider_id, page, search, page_size):
                                                   'page_size': page_size,
                                                   'fields':
                                                   ','.join(search_fields)})
+
+
+class TokenAuth(AuthBase):
+    """Attaches HTTP Authorization Header to the given Request object."""
+
+    def __call__(self, r, token_name='token'):
+        # modify and return the request
+
+        r.headers['Authorization'] = token_name + ' ' + \
+            XMSConfigurations.objects.first().xis_api_key
+        return r
