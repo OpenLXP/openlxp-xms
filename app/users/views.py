@@ -100,4 +100,5 @@ class IsLoggedInView(GenericAPIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        return Response({'message': 'valid'}, status=status.HTTP_200_OK)
+        return Response({"user": UserSerializer(request.user).data},
+                        status=status.HTTP_200_OK)
