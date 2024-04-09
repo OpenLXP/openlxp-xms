@@ -1,8 +1,11 @@
+import json
+
 from django.test import tag
 from django.urls import reverse
 from rest_framework import status
 
 from users.models import UserProfile
+from users.serializers import UserSerializer
 
 from .test_setup import TestSetUp
 
@@ -14,14 +17,16 @@ class UserTests(TestSetUp):
         """Test that the validate endpoint verifies an active session"""
         url_validate = reverse('users:validate')
 
-        validate_json = b'{"message":"valid"}'
+        validate_dict = {'user': UserSerializer(self.base_user).data}
 
         self.client.login(username=self.username, password=self.password)
 
         validate_response = self.client.get(url_validate)
 
         self.assertEqual(validate_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(validate_response.content, validate_json)
+        self.assertDictEqual(
+            json.loads(validate_response.content.decode('utf-8')),
+            validate_dict)
 
     def test_no_session_validate(self):
         """Test that the validate endpoint errors when no active session"""
@@ -37,7 +42,7 @@ class UserTests(TestSetUp):
         url = reverse('users:login')
         url_validate = reverse('users:validate')
 
-        validate_json = b'{"message":"valid"}'
+        validate_dict = {'user': UserSerializer(self.base_user).data}
 
         response = self.client.post(
             url, {'username': self.username, 'password': self.password},
@@ -48,7 +53,9 @@ class UserTests(TestSetUp):
         validate_response = self.client.get(url_validate)
 
         self.assertEqual(validate_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(validate_response.content, validate_json)
+        self.assertDictEqual(
+            json.loads(validate_response.content.decode('utf-8')),
+            validate_dict)
 
     def test_no_login(self):
         """Test that the login endpoint errors with no credentials"""
@@ -91,19 +98,22 @@ class UserTests(TestSetUp):
         url = reverse('users:register')
         url_validate = reverse('users:validate')
 
-        validate_json = b'{"message":"valid"}'
-
         response = self.client.post(
             url, {'email': self.new_username, 'password': self.new_password,
                   'first_name': self.new_fname, 'last_name': self.new_lname},
             format='json')
+
+        validate_dict = {'user': UserSerializer(
+            UserProfile.objects.get(email=self.new_username)).data}
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         validate_response = self.client.get(url_validate)
 
         self.assertEqual(validate_response.status_code, status.HTTP_200_OK)
-        self.assertEqual(validate_response.content, validate_json)
+        self.assertDictEqual(
+            json.loads(validate_response.content.decode('utf-8')),
+            validate_dict)
         self.assertIsNotNone(UserProfile.objects.get(email=self.new_username))
 
     def test_repeated_register(self):
