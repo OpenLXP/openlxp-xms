@@ -234,6 +234,7 @@ OPEN_ENDPOINTS = [
     "/api/auth/register",
     "/api/auth/logout",
     "/api/auth/validate",
+    "/api/config/sso/",
 ]
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
