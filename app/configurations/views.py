@@ -47,4 +47,4 @@ class SSOConfigurationView(APIView):
                                         objects.all(), many=True
                                         ).data]
 
-        return Response({"single_sign_on_options": serialized_ssos}})
+        return Response({"single_sign_on_options": serialized_ssos})
