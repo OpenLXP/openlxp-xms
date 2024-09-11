@@ -7,7 +7,7 @@ server {
     server_name example.org;
 
     location /static {
-        root /tmp/app/openlxp-xms;
+        root /tmp/openlxp-xms/app;
     }
 
     location / {
