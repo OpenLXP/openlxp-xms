@@ -88,7 +88,7 @@ git clone https://github.com/OpenLXP/openlxp-xms.git
     - Configure Security Assertion Markup Language (SAML)
         1. Click on `Saml configurations` > `Add saml configurations`
             - Enter configurations below:
-                
+
                 - `Name`: The name that will be used to identify the IdP in the URL.
 
                 - `Entity id`: The unique name provided by the IdP.
@@ -137,3 +137,7 @@ Information on the settings for the authentication module can be found on the [O
 
 The setting `OPEN_ENDPOINTS` can be defined in the django settings file.
 It is a list of strings (regex notation may be used) for URLs that should not check for authentication or authorization.
+
+## License
+
+ This project uses the [MIT](http://www.apache.org/licenses/LICENSE-2.0) license.
