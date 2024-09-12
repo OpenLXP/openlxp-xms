@@ -1,7 +1,7 @@
-# Enterprise Course Catalog: OPENLXP-XMS
-This is the Experience Management Service (XMS) is the backend responsible for managing courses and catalogs and is part of the Enterprise Course Catalog OpenLXP platform.
+# Enterprise Course Catalog: OpenLXP-XMS
+The Experience Management Service (XMS) is a part of the OpenLXP Enterprise Course Catalog (ECC) platform. It is  the backend responsible for managing courses/catalogs.
 
-The OPENLXP-XMS is the user interface facilitating modification and augmentation of records by learning experience owners and managers.
+XMS is the user interface facilitating modification and augmentation of records by learning experience owners and managers.
 
 This Django web application enables experience owners/managers to modify/augment experience metadata via (i.e., the "admin portal") REST API. It utilizes the Django admin UI for system configuration and management.
 
@@ -29,7 +29,7 @@ Or copy it into one of these folders to install it system-wide:
 
 
 ## 1. Clone the project
-Clone the ironbank repository
+Clone the Github repository
 ```
 git clone https://github.com/OpenLXP/openlxp-xms.git
 ```  
@@ -61,13 +61,13 @@ git clone https://github.com/OpenLXP/openlxp-xms.git
 
 
 ## 4. Deployment
-1. Create the openlxp docker network
+1. Create the OpenLXP Docker network.
     Open a terminal and run the following command in the root directory of the project.
     ```
     docker network create openlxp
     ```
 
-2. Run the command below to deploy XMS from `docker-compose.yaml` 
+2. Run the docker compose command below to deploy XMS with its resources. 
     ```
     docker-compose up -d --build
     ```
@@ -93,13 +93,13 @@ git clone https://github.com/OpenLXP/openlxp-xms.git
                 - `Attribute mapping`: The JSON formatted mapping to convert attributes provided by the IdP, to a User in this system.
 
 ## 6. Removing Deployment
-To destroy the created resources, simply run the command below in your terminal:
+To destroy the created resources, simply run the docker-compose command below in your terminal:
     
     
-    docker compose down
+    docker-compose down
 
 ## Troubleshooting
-- If the container builds but crashes or logs an error of unrecognized commands, the issue is usually incorrect line endings. Most IDEs/Text Editors allow changing the line endings, but the dos2unix utility can also be used to change the line endings of `start-app.sh` and `start-server.sh` to LF.
+- If the container builds but crashes, or error logs a bunch of unrecognized commands, the issue is usually incorrect line endings. Most IDEs/Text Editors allow changing the line endings, but the dos2unix utility can also be used to change the line endings of `start-app.sh` and `start-server.sh` to LF.
 
 
 - A good basic troubleshooting step is to use `docker-compose down` and then `docker-compose up --build` to rebuild the app image; however, this will delete everything in the database.
@@ -108,15 +108,6 @@ To destroy the created resources, simply run the command below in your terminal:
     - If the build fails when pip tries to install xmlsec, the issue is usually missing libraries.
 
     - The xmlsec package includes instructions for installing the libraries on common platforms in the [documentation](https://github.com/mehcode/python-xmlsec/blob/master/README.rst#install)
-
-
-## Update
-
-To update an existing installation: 
-
-1. Pull the latest changes using git
-
-2. Restart the application using `docker-compose restart`
 
 ## Testing
 
