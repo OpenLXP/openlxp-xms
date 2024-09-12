@@ -79,17 +79,24 @@ git clone https://github.com/OpenLXP/openlxp-xms.git
     - Configure Experience Management Service (XMS)
         1. Click on `Xms connections` > `Add Xms connection`
             - Enter configurations below:
+
                 - `Target xis metadata api`: Metadata API Endpoint to connect to on an XIS instance.
+
                 - `XIS catalogs api`: Catalogs API Endpoint to connect to on an XIS instance.
 
 3. <u>OPENLXP AUTHENTICATION</u>
     - Configure Security Assertion Markup Language (SAML)
         1. Click on `Saml configurations` > `Add saml configurations`
             - Enter configurations below:
+                
                 - `Name`: The name that will be used to identify the IdP in the URL.
+
                 - `Entity id`: The unique name provided by the IdP.
+
                 - `Url`: The connection URL to connect to the IdP at.
+
                 - `Cert`: The public cert used to connect to the IdP.
+
                 - `Attribute mapping`: The JSON formatted mapping to convert attributes provided by the IdP, to a User in this system.
 
 ## 6. Removing Deployment
