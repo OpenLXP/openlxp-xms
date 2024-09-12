@@ -60,7 +60,7 @@ git clone https://github.com/OpenLXP/openlxp-xms.git
 | SP_PUBLIC_CERT            | The Public Key to use when this application communicates with Identity Providers to use Single Sign On |
 
 
-## 4. Deployment
+## 3. Deployment
 1. Create the OpenLXP Docker network.
     Open a terminal and run the following command in the root directory of the project.
     ```
@@ -72,7 +72,7 @@ git clone https://github.com/OpenLXP/openlxp-xms.git
     docker-compose up -d --build
     ```
 
-## 5. Configuration for XMS
+## 4. Configuration for XMS
 1. Navigate over to `http://localhost:8000/admin/` in your browser and login to the Django Admin page with the admin credentials set in your `.env` (`DJANGO_SUPERUSER_EMAIL` & `DJANGO_SUPERUSER_PASSWORD`)
 
 2. <u>CONFIGURATIONS</u>
@@ -99,7 +99,7 @@ git clone https://github.com/OpenLXP/openlxp-xms.git
 
                 - `Attribute mapping`: The JSON formatted mapping to convert attributes provided by the IdP, to a User in this system.
 
-## 6. Removing Deployment
+## 5. Removing Deployment
 To destroy the created resources, simply run the docker-compose command below in your terminal:
     
     
