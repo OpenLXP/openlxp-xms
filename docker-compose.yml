@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db:
-    image: mysql:5.7
+    image: mysql:8.0.36
     ports:
       - '3306:3306'
     environment:
@@ -16,9 +16,9 @@ services:
 
   app:
     container_name: openlxp-xms
-    # image: registry1.dso.mil/ironbank/adl-ousd/ecc-openlxp/ecc-openlxp-xms:1.0.3
-    build:
-      context: .
+    image: registry1.dso.mil/ironbank/adl-ousd/ecc-openlxp/ecc-openlxp-xms:1.0.3
+    # build:
+    #   context: .
     ports:
       - "8000:8020"
     command: >
