@@ -168,7 +168,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 CSRF_COOKIE_DOMAIN = '.deloitteopenlxp.com'
-CSRF_TRUSTED_ORIGINS = ['https://dev-xms-admin.deloitteopenlxp.com', ]
+CSRF_TRUSTED_ORIGINS = ['https://dev-xms-admin.deloitteopenlxp.com', 'https://dev-xms.deloitteopenlxp.com' ]
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
