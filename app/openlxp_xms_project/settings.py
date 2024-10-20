@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
+    "health_check",
     "rest_framework",
     "rest_framework.authtoken",
     "social_django",
@@ -169,6 +170,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 CSRF_COOKIE_DOMAIN = '.deloitteopenlxp.com'
 CSRF_TRUSTED_ORIGINS = ['https://dev-xms-admin.deloitteopenlxp.com', 'https://dev-xms.deloitteopenlxp.com', 'https://dev-xms2-admin.deloitteopenlxp.com', 'https://dev-xms2.deloitteopenlxp.com'  ]
+
+SECURE_SSL_REDIRECT = False
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
