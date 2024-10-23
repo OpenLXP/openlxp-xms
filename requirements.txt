@@ -28,7 +28,7 @@ isort==5.11.5
 
 martor>=1.5.8,<1.6.0
 
-mysql-connector-python>=8.4.0, <8.5.0
+mysql-connector-python==9.0.0
 
 numpy==1.26.4
 
