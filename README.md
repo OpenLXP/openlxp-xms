@@ -29,9 +29,9 @@ Or copy it into one of these folders to install it system-wide:
 
 
 ## 1. Clone the project
-Clone the Github repository
+Clone the ironbank repository
 ```
-git clone https://github.com/OpenLXP/openlxp-xms.git
+git clone https://repo1.dso.mil/dsop/adl-ousd/ecc-openlxp/ecc-openlxp-xms.git
 ```  
 
 ## 2. Set up your environment variables
@@ -60,20 +60,108 @@ git clone https://github.com/OpenLXP/openlxp-xms.git
 | SP_PUBLIC_CERT            | The Public Key to use when this application communicates with Identity Providers to use Single Sign On |
 
 
-## 3. Deployment
-1. Create the OpenLXP Docker network.
-    Open a terminal and run the following command in the root directory of the project.
+## 4. Deployment
+1. Create the OpenLXP Docker network. Open a terminal and run the following command in the root directory of the project:
     ```
     docker network create openlxp
     ```
 
-2. Run the docker compose command below to deploy XMS with its resources. 
+2. Create an `nginx.default` file in the root directory of the project with the following configuration for the nginx container:
     ```
-    docker-compose up -d --build
+    # nginx.default
+
+    include /etc/nginx/mime.types;
+
+    server {
+        listen 8020;
+        server_name example.org;
+
+        location /static {
+            root /tmp/openlxp-xms/app;
+        }
+
+        location / {
+            proxy_pass http://app:8000;
+            proxy_set_header Host $http_host;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+    }
     ```
 
-## 4. Configuration for XMS
-1. Navigate over to `http://localhost:8000/admin/` in your browser and login to the Django Admin page with the admin credentials set in your `.env` (`DJANGO_SUPERUSER_EMAIL` & `DJANGO_SUPERUSER_PASSWORD`)
+4. Create a `docker-compose.yaml` file in the root directory of the project and paste the configuration below.
+    ```
+    services:
+    db:
+        image: mysql:8.0.36
+        ports:
+        - '3306:3306'
+        environment:
+        MYSQL_DATABASE: "${DB_NAME}"
+    #      MYSQL_USER: 'root'
+        MYSQL_PASSWORD: "${DB_PASSWORD}"
+        MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+        MYSQL_HOST: ''
+        networks:
+            - openlxp
+
+    app:
+        container_name: openlxp-xms
+        # image: registry1.dso.mil/ironbank/adl-ousd/ecc-openlxp/ecc-openlxp-xms:1.0.3
+        build:
+        context: .
+        ports:
+        - "8000:8020"
+        command: >
+        sh -c ". /tmp/start-app.sh"
+        environment:
+        AWS_ACCESS_KEY_ID: ""
+        AWS_SECRET_ACCESS_KEY: ""
+        AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
+        CSRF_COOKIE_DOMAIN: "${CSRF_COOKIE_DOMAIN}"
+        CSRF_TRUSTED_ORIGINS: "${CSRF_TRUSTED_ORIGINS}"
+        DB_NAME: "${DB_NAME}"
+        DB_USER: "${DB_USER}"
+        DB_PASSWORD: "${DB_PASSWORD}"
+        DB_HOST: "${DB_HOST}"
+        DJANGO_SUPERUSER_USERNAME: "${DJANGO_SUPERUSER_USERNAME}"
+        DJANGO_SUPERUSER_PASSWORD: "${DJANGO_SUPERUSER_PASSWORD}"
+        DJANGO_SUPERUSER_EMAIL: "${DJANGO_SUPERUSER_EMAIL}"
+        ENTITY_ID: "${ENTITY_ID}"
+        LOGIN_REDIRECT_URL: "${LOGIN_REDIRECT_URL}"
+        LOG_PATH: "${LOG_PATH}"
+        SECRET_KEY_VAL: "${SECRET_KEY_VAL}"
+        SP_PUBLIC_CERT: "${SP_PUBLIC_CERT}"
+        SP_PRIVATE_KEY: "${SP_PRIVATE_KEY}"
+        volumes:
+        - shared-app-data:/tmp/openlxp-xms
+        depends_on:
+        - db
+        networks:
+        - openlxp
+    
+    nginx:
+        image: nginx:latest
+        ports: 
+        - 8001:8020
+        volumes: 
+        - ./nginx.default:/etc/nginx/conf.d/default.conf
+        - shared-app-data:/tmp/openlxp-xms
+        depends_on:
+        - app
+        networks:
+        - openlxp
+
+    networks:
+    openlxp:
+        external: true
+
+    volumes:
+    shared-app-data:  
+    ```
+
+## 5. Configuration for XMS
+1. Navigate over to `http://localhost:8001/admin/` in your browser and login to the Django Admin page with the admin credentials set in your `.env` (`DJANGO_SUPERUSER_EMAIL` & `DJANGO_SUPERUSER_PASSWORD`)
 
 2. <u>CONFIGURATIONS</u>
     - Configure Experience Management Service (XMS)
@@ -99,7 +187,7 @@ git clone https://github.com/OpenLXP/openlxp-xms.git
 
                 - `Attribute mapping`: The JSON formatted mapping to convert attributes provided by the IdP, to a User in this system.
 
-## 5. Removing Deployment
+## 6. Removing Deployment
 To destroy the created resources, simply run the docker-compose command below in your terminal:
     
     
