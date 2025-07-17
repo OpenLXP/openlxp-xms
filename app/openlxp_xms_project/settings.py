@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
-    "social_django",
     "openlxp_authentication",
     "core",
     "configurations",
