@@ -19,4 +19,5 @@ pandas>=1.1.5,<1.2.0
 Pillow>=10.3.0, <10.4.0
 python-slugify>=8.0.1
 requests>=2.32.4, <2.33.0
+setuptools==80.9.0
 text-unidecode>=1.3
