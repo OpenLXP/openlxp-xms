@@ -24,4 +24,6 @@ urlpatterns = [
     re_path('api/', include('api.urls')),
     re_path("api/", include("users.urls")),
     re_path("api/", include("configurations.urls")),
+    re_path('health/', include('health_check.urls'),
+            name='health_check')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
