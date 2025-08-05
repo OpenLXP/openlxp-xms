@@ -72,7 +72,7 @@ class RegisterView(GenericAPIView):
         # create the user in the db
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        serializer.save()
 
         # authenticates the user after creation
         user = authenticate(username=username, password=password)

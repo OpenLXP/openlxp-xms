@@ -10,7 +10,7 @@ GROUPS = ['System Operator', 'Experience Owner', 'Experience Manager',
 MODELS = ['catalogs', 'list experiences', 'experiences']
 PERMISSIONS = ['view', 'add', 'change', 'delete']
 
-
+# function
 def forwards_func(apps, schema_editor):
     Group = apps.get_model('auth', 'Group')
     Perm = apps.get_model('auth', 'Permission')
@@ -60,15 +60,16 @@ def forwards_func(apps, schema_editor):
                                                    content_type=
                                                    content_type)
                 except Perm.DoesNotExist:
-                    logging.warning("Permission not found with name '{}'.".
-                                    format(name))
+#                    logging.warning("Permission not found with name '{}'.".
+#                                    format(name))
+                    logging.warning("Permission not found with name %s", name)
                     continue
 
                 new_group.permissions.add(model_add_perm)
 
     print("Moved permissions to api app.")
 
-
+# function
 def reverse_func(apps, schema_editor):
     # forwards_func() creates two Country instances,
     # so reverse_func() should delete them.

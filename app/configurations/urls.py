@@ -9,7 +9,5 @@ urlpatterns = [
     path("config/catalogs/", views.CatalogConfigurationView.as_view(),
          name="catalogs-config"),
     path("config/info-mapping/", views.CourseInformationMappingView.as_view(),
-         name="course-information"),
-    path("config/sso/", views.SSOConfigurationView.as_view(),
-         name="sso-config")
+         name="course-information")
 ]

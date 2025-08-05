@@ -25,15 +25,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY_VAL")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 mimetypes.add_type("text/css", ".css", True)
 
-ALLOWED_HOSTS = ["*"]
+SELF_VALUE = "'self'"  # defining a constant
+SELF_VALUE1 = ("'self' '" +
+               os.environ.get('STYLE_SHA') +
+               "' '"+
+               os.environ.get('IMAGE_SHA') +
+               "' ") # defining a constant
+IMG_DATA_VALUE = "data:"
+
+CSP_DEFAULT_SRC = (SELF_VALUE,)
+CSP_SCRIPT_SRC = (SELF_VALUE,)
+CSP_IMG_SRC = (SELF_VALUE, IMG_DATA_VALUE)
+CSP_STYLE_SRC = (SELF_VALUE1,)
+CSP_FRAME_SRC = (SELF_VALUE,)
+CSP_FONT_SRC = (SELF_VALUE,)
 
 AUTH_USER_MODEL = "users.UserProfile"
 
-# Application definition
+# standard encoding format for all HTML content
+DEFAULT_CHARSET = "utf-8" # Explicitly select UTF-8 encoding, although this is the default.
 
+
+# Application definition
 INSTALLED_APPS = [
     "admin_interface",
     "colorfield",
@@ -64,7 +80,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "csp.middleware.CSPMiddleware",
 ]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 ROOT_URLCONF = "openlxp_xms_project.urls"
 
@@ -137,6 +157,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 LOG_PATH = os.environ.get("LOG_PATH")
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 
 LOGGING = {
     "version": 1,
@@ -165,21 +187,21 @@ LOGGING = {
 
 EMAIL_BACKEND = "django_ses.SESBackend"
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = [
+os.environ.get('CORS_ALLOWED_ORIGINS')
+]
 CORS_ALLOW_CREDENTIALS = True
-
-CSRF_COOKIE_DOMAIN = '.deloitteopenlxp.com'
-CSRF_TRUSTED_ORIGINS = ['https://dev-xms-admin.deloitteopenlxp.com', 'https://dev-xms.deloitteopenlxp.com',
-                        'https://dev-xms2-admin.deloitteopenlxp.com', 'https://dev-xms2.deloitteopenlxp.com',
-                        'https://xmsui-dote.deloitteopenlxp.com', 'https://xms-dote.deloitteopenlxp.com']
+CSRF_COOKIE_DOMAIN = os.environ.get('CSRF_COOKIE_DOMAIN')
+CSRF_TRUSTED_ORIGINS = [os.environ.get('CSRF_TRUSTED_ORIGINS'), ]
+CSRF_COOKIE_HTTPONLY = True
 
 SECURE_SSL_REDIRECT = True
 SECURE_REDIRECT_EXEMPT = ['health/', 'api/health/']
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_BROWSER_XSS_FILTER = True
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'images')
 
 # openlxp_authentication settings openlxp_authentication documentation:
 # https://github.com/OpenLXP/openlxp-authentication#readme

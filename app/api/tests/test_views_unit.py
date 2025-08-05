@@ -1,13 +1,10 @@
 import json
 from unittest.mock import Mock, patch
-
 from ddt import ddt
 from django.test import tag
 from django.urls import reverse
 from rest_framework import status
-
 from api.tests.test_setup import TestSetUp
-
 
 @tag("unit")
 @ddt
