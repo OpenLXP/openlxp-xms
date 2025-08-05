@@ -29,11 +29,6 @@ DEBUG = False
 mimetypes.add_type("text/css", ".css", True)
 
 SELF_VALUE = "'self'"  # defining a constant
-SELF_VALUE1 = ("'self' '" +
-               os.environ.get('STYLE_SHA') +
-               "' '"+
-               os.environ.get('IMAGE_SHA') +
-               "' ") # defining a constant
 IMG_DATA_VALUE = "data:"
 
 CSP_DEFAULT_SRC = (SELF_VALUE,)
