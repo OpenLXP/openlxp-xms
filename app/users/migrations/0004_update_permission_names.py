@@ -11,7 +11,7 @@ OLD_MODELS = ['catalogs', 'list experiences', 'experiences']
 NEW_MODELS = ['xis available catalogs', 'xis catalog', 'xis experience']
 PERMISSIONS = ['view', 'add', 'change', 'delete']
 
-
+# function
 def forwards_func(apps, schema_editor):
     Group = apps.get_model('auth', 'Group')
     Perm = apps.get_model('auth', 'Permission')
@@ -61,15 +61,16 @@ def forwards_func(apps, schema_editor):
                                                    content_type=
                                                    content_type)
                 except Perm.DoesNotExist:
-                    logging.warning("Permission not found with name '{}'.".
-                                    format(name))
+#                    logging.warning("Permission not found with name '{}'.".
+#                                    format(name))
+                    logging.warning("Permission not found with name %s", name)
                     continue
 
                 new_group.permissions.add(model_add_perm)
 
     print("Updated permission names.")
 
-
+# function
 def reverse_func(apps, schema_editor):
     ContentType = apps.get_model('contenttypes', 'ContentType')
 

@@ -33,8 +33,8 @@ class XMSConfigurations(models.Model):
         null=True
     )
     xis_api_key = models.CharField(
-        help_text="Enter the XIS API Key",
-        max_length=128
+        help_text="Enter the XIS API Key (512 character limit)",
+        max_length=512
     )
 
     def get_absolute_url(self):
