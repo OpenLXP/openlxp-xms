@@ -28,6 +28,10 @@ SECRET_KEY = os.environ.get("SECRET_KEY_VAL")
 DEBUG = False
 mimetypes.add_type("text/css", ".css", True)
 
+# Read the environment variable
+ALLOWED_HOSTS = os.environ.get('HOSTS').split(';')
+
+
 SELF_VALUE = "'self'"  # defining a constant
 IMG_DATA_VALUE = "data:"
 
