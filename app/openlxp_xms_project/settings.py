@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY_VAL")
 DEBUG = False
 mimetypes.add_type("text/css", ".css", True)
 
-ALLOWED_HOSTS = os.environ.get("HOSTS")
+ALLOWED_HOSTS = [os.environ.get("HOSTS")]
 
 SELF_VALUE = "'self'"  # defining a constant
 IMG_DATA_VALUE = "data:"
