@@ -72,7 +72,7 @@ class RegisterView(GenericAPIView):
         # create the user in the db
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        serializer.save()
 
         # authenticates the user after creation
         user = authenticate(username=username, password=password)
@@ -100,4 +100,5 @@ class IsLoggedInView(GenericAPIView):
         if not request.user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-        return Response({'message': 'valid'}, status=status.HTTP_200_OK)
+        return Response({"user": UserSerializer(request.user).data},
+                        status=status.HTTP_200_OK)

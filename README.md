@@ -32,7 +32,7 @@ Or copy it into one of these folders to install it system-wide:
 Clone the Github repository
 ```
 git clone https://github.com/OpenLXP/openlxp-xms.git
-```  
+```   
 
 ## 2. Set up your environment variables
 - Create a `.env` file in the root directory
